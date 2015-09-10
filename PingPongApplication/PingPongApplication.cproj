@@ -119,7 +119,31 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ADC_DRIVER.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ADC_DRIVER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="JOYSTICK_DRIVER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="JOYSTICK_DRIVER.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PING_PONG_LIB.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="PingPongApplication.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PING_PONG_LIB.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="USART_DRIVER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="USART_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

@@ -16,6 +16,13 @@ typedef struct JoystickPosition
 } JoystickPosition;
 
 
+typedef struct TouchpadData{
+	volatile int rightTouchPad;
+	volatile int leftTouchPad;
+	volatile char rightButton;
+	volatile char leftButton;
+}TouchpadData;
+
 typedef enum 
 {	
 	Left,
@@ -31,7 +38,7 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos);
 
 JoystickPosition joystick_calibration();
 
-
+TouchpadData read_touchpad_data();
 
 
 #endif /* JOYSTICK_DRIVER_H_ */

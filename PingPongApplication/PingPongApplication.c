@@ -24,6 +24,7 @@ int main(void)
 	clear_bit(DDRD, PD2);
 	
 	init();
+	TouchpadData data; 
 	JoystickPosition position;
 	JoystickPosition calibration;
 	calibration = joystick_calibration();
@@ -35,12 +36,18 @@ int main(void)
 	{
 		position = read_joystick_position(calibration);
 		
-		printf("The x-axis is: %d  ", read_joystick_direction(position));//position.xaxis);
-		printf("  The y-axis is: %d \n ", read_joystick_direction(position));//position.yaxis);
+		//printf("The x-axis is: %d  ", position.xaxis);
+		//printf("  The y-axis is: %d \n ", position.yaxis);
 		
 		_delay_ms(200);
 		
-		if(test_bit(PIND, PD3))
+		
+		data = read_touchpad_data();
+		
+		printf("The left pad is: %d  ", data.leftTouchPad);
+		printf("  The right pad is: %d \n ", data.rightTouchPad);
+		
+		if(data.rightButton || data.leftButton)
 		{
 			led_toggle();
 		}

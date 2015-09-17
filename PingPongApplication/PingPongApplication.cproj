@@ -131,6 +131,12 @@
     <Compile Include="JOYSTICK_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="OLED_DRIVER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="OLED_DRIVER.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="PING_PONG_LIB.c">
       <SubType>compile</SubType>
     </Compile>
@@ -144,6 +150,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="USART_DRIVER.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="USER_INTERFACE.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="USER_INTERFACE.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

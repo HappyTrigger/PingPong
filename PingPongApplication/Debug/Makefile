@@ -37,7 +37,13 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../PingPongApplication.c
+../ADC_DRIVER.c \
+../JOYSTICK_DRIVER.c \
+../OLED_DRIVER.c \
+../PING_PONG_LIB.c \
+../PingPongApplication.c \
+../USART_DRIVER.c \
+../USER_INTERFACE.c
 
 
 PREPROCESSING_SRCS += 
@@ -47,16 +53,40 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-PingPongApplication.o
+ADC_DRIVER.o \
+JOYSTICK_DRIVER.o \
+OLED_DRIVER.o \
+PING_PONG_LIB.o \
+PingPongApplication.o \
+USART_DRIVER.o \
+USER_INTERFACE.o
 
 OBJS_AS_ARGS +=  \
-PingPongApplication.o
+ADC_DRIVER.o \
+JOYSTICK_DRIVER.o \
+OLED_DRIVER.o \
+PING_PONG_LIB.o \
+PingPongApplication.o \
+USART_DRIVER.o \
+USER_INTERFACE.o
 
 C_DEPS +=  \
-PingPongApplication.d
+ADC_DRIVER.d \
+JOYSTICK_DRIVER.d \
+OLED_DRIVER.d \
+PING_PONG_LIB.d \
+PingPongApplication.d \
+USART_DRIVER.d \
+USER_INTERFACE.d
 
 C_DEPS_AS_ARGS +=  \
-PingPongApplication.d
+ADC_DRIVER.d \
+JOYSTICK_DRIVER.d \
+OLED_DRIVER.d \
+PING_PONG_LIB.d \
+PingPongApplication.d \
+USART_DRIVER.d \
+USER_INTERFACE.d
 
 OUTPUT_FILE_PATH +=PingPongApplication.elf
 
@@ -72,6 +102,18 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

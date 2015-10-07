@@ -5,7 +5,14 @@
  *  Author: michalma
  */ 
 
+#include <avr/io.h>
+#include <stdio.h>
+#include <util/delay.h>
 #include "PING_PONG_LIB.h"
+#include "OLED_DRIVER.h"
+#include "USART_DRIVER.h"
+#include "USER_INTERFACE.h"
+
 
 /****************************************************************************
 * \brief Initialize all important peripherals and pins
@@ -13,7 +20,7 @@
 ****************************************************************************/
 void init()
 {
-	USART_Init(MYUBBR);
+	USART_init(MYUBBR);
 	/* Enables standard IO functions */	
 	fdevopen(USART_putchar, USART_getchar);
 	/* Enables external memory*/
@@ -22,12 +29,14 @@ void init()
 	set_bit(DDRB, PB0);
 	/* Pin is now driven LOW*/
 	clear_bit(PORTB, PB0);
+	/* Initialize OLED display */
+	init_oled();
+	interface_init();
 }
 
 /****************************************************************************
 * \brief Toggles the led connected to pin 1 (PORTB, PB0)
 *
-* \param ms During this time value on the pin shall stay unchanged.
 ****************************************************************************/
 void led_toggle()
 {	
@@ -44,9 +53,8 @@ void led_toggle()
 
 
 /****************************************************************************
-* \Testfunc for the SRAM and Gal chip
+* \brief Test function for the SRAM and Gal chip
 *
-* \
 ****************************************************************************/
 void SRAM_test(void)
 {

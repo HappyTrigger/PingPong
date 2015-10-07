@@ -5,13 +5,15 @@
  *  Author: michalma
  */ 
 
+#include <avr/delay.h>
 #include <avr/pgmspace.h>
 #include <string.h>
+#include <stdlib.h>
 #include "OLED_DRIVER.h"
 #include "PING_PONG_LIB.h"
+#include "JOYSTICK_DRIVER.h"
 
 static unsigned int position = 0;
-
 
 const unsigned char PROGMEM font[95][5] = {
 	{0b00000000,0b00000000,0b00000000,0b00000000,0b00000000}, //
@@ -111,7 +113,12 @@ const unsigned char PROGMEM font[95][5] = {
 	{0b00000100,0b00000010,0b00000100,0b00000010,0b00000000}, // ~
 };
 
-void init_oled(){
+/****************************************************************************
+* \brief Initialize OLED display
+*
+****************************************************************************/
+void init_oled()
+{
 	write_c(0xae);    // display off
 	write_c(0xa1);    //segment remap
 	write_c(0xda);    //common pads hardware: alternative
@@ -136,18 +143,31 @@ void init_oled(){
 	write_c(0xaf);    // display on
 }
 
+/****************************************************************************
+* \brief Write command to OLED display
+*
+****************************************************************************/
 void write_c(char command)
 {
 	volatile char *ext_oled = (char *) OLED_COMMAND_BASE_ADDR;
 	ext_oled[0] = command;
 }
 
+
+/****************************************************************************
+* \brief Write data to OLED display
+*
+****************************************************************************/
 void write_d(char data)
 {
 	volatile char *ext_oled = (char *) OLED_DATA_BASE_ADDR;
 	ext_oled[0] = data;
 }
 
+/****************************************************************************
+* \brief Reset position to [0,0]
+*
+****************************************************************************/
 void reset_position()
 {
 	write_c(0x21); // set column to 0
@@ -159,6 +179,10 @@ void reset_position()
 	write_c(0x07);
 }
 
+/****************************************************************************
+* \brief Refresh OLED by rewriting all data from SRAM to OLED
+*
+****************************************************************************/
 void refresh_oled()
 {
 	reset_position();
@@ -172,6 +196,10 @@ void refresh_oled()
 	}
 }
 
+/****************************************************************************
+* \brief Clear OLED display
+*
+****************************************************************************/
 void clear_oled()
 {
 	volatile char *ext_ram = (char *) OLED_BASE_SRAM_ADDRESS;
@@ -182,6 +210,13 @@ void clear_oled()
 	}
 }
 
+/****************************************************************************
+* \brief Set pixel on position [x,y] on OLED display
+*
+* \param in x Position of pixel that should be set
+* \param in y Position of pixel that should be set
+* \return Success/Failure
+****************************************************************************/
 int set_pixel(unsigned int x,unsigned int y)
 {
 	volatile char *ext_ram = (char *) OLED_BASE_SRAM_ADDRESS;
@@ -200,8 +235,16 @@ int set_pixel(unsigned int x,unsigned int y)
 		unsigned int coloumn = page*128 + x;
 		ext_ram[coloumn] |= (1 << (y % 8));
 	}
+	return 0;
 }
 
+/****************************************************************************
+* \brief Unset pixel on position [x,y] on OLED display
+*
+* \param in x Position of pixel that should be unset
+* \param in y Position of pixel that should be unset
+* \return Success/Failure
+****************************************************************************/
 int unset_pixel(unsigned int x,unsigned int y)
 {
 	volatile char *ext_ram = (char *) OLED_BASE_SRAM_ADDRESS;
@@ -220,21 +263,214 @@ int unset_pixel(unsigned int x,unsigned int y)
 		unsigned int column = page*128 + x;
 		ext_ram[column] &= ~(1 << (y % 8));
 	}
+	return 0;
 }
 
+
+/****************************************************************************
+* \brief Print character on current position on OLED display
+*
+* \param in x Position of pixel that should be set
+****************************************************************************/
 void print_char(char character)
 {
-	volatile char *ext_ram = (char *) OLED_BASE_SRAM_ADDRESS;
+	volatile char* ext_ram = (char*) OLED_BASE_SRAM_ADDRESS;
 	
-	for(int i=0; i<4;i++)
+	for(int i = 0; i < 4; i++)
 	{
 		ext_ram[position] = pgm_read_word_near(&(font[character-32][i]));
 		position++;
 	}
 }
 
+void print_inverted_char(char character)
+{
+	volatile char* ext_ram = (char*) OLED_BASE_SRAM_ADDRESS;
+	
+	for(int i = 0; i < 4; i++)
+	{
+		ext_ram[position] = ~pgm_read_word_near(&(font[character-32][i]));
+		position++;
+	}
+}
+
+/****************************************************************************
+* \brief Set position of the next character
+*
+* \param in column Column on the X-axis
+* \param in page Row on Y-axis
+* \return Success/Failure
+****************************************************************************/
+int set_position(unsigned int column, unsigned int page)
+{
+	if (column > 32)
+	{
+		return 1;
+	}
+	else if (page > 8)
+	{
+		return 1;
+	}
+		
+	position = page * 128 + column * 4;
+	
+	return 0;
+}
+
+/****************************************************************************
+* \brief Print string to the OLED display
+*
+* \param in String that shall be printed
+* \return Success/Failure
+****************************************************************************/
+int print_string(char* string)
+{
+	int lenght  = strlen(string);
+	for(int i = 0; i < lenght; i++)
+	{
+		print_char(string[i]);
+	}
+	
+	return 0;
+}
+
+/****************************************************************************
+* \brief Revert the colour of the particular line
+*
+****************************************************************************/
+void revert_colour_line(unsigned char line)
+{
+	volatile char* ext_ram = (char*) OLED_BASE_SRAM_ADDRESS;
+		
+	for(int i = (line * OLED_LINE_LENGTH_COLUMNS) + 2; i < ((line + 1) * OLED_LINE_LENGTH_COLUMNS); i++)
+	{
+		ext_ram[i-1] = ~ext_ram[i-1];
+	}
+}
 
 
+/****************************************************************************
+* \brief Print line to the OLED display
+*
+* \param in x1 X-axis position of the first point
+* \param in y1 Y-axis position of the first point
+* \param in x2 X-axis position of the second point
+* \param in y2 Y-axis position of the second point
+* \return Success/Failure
+****************************************************************************/
+int print_line(int x1, int y1, int x2, int y2)
+{
+	if (x1 > OLED_WIDTH || x2 > OLED_WIDTH || y1 > OLED_HEIGHT || y2 > OLED_HEIGHT || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0) 
+	{
+		return 1;
+	}
+	
+	if (x1 == x2 && y1 == y2)
+	{ 
+		set_pixel(x1,y1);
+		return 0;
+	}
+	
+	int dx,dy,sx,sy,i;
+	float k,p;
+	
+	dx=abs(x2-x1);
+	dy=abs(y2-y1);
+	
+	sx = x1 < x2 ? 1 : -1;
+	sy = y1 < y2 ? 1 : -1;
+	
+	if (dx > dy)
+	{
+		k = (float) dy / dx;
+		p = y1;
+		for (i = x1; i != x2; i += sx)
+		{
+			set_pixel(x1, (int) (p+0.5));
+			x1 += sx;
+			p += k * sy;
+		}
+	}
+	else
+	{
+		k = (float) dx / dy;
+		p = x1;
+		for (i = y1; i != y2; i += sy)
+		{
+			set_pixel((int)(p+0.5),y1);
+			y1 += sy;
+			p += k * sx;
+		}
+	}
+	set_pixel(x2, y2);
+	
+	return 0;
+}
+
+/****************************************************************************
+* \brief Print polygon to the OLED display
+*
+* \param in n Number of edges of the polygon
+* \param in Coordinates of the polygon points
+* \return Success/Failure
+****************************************************************************/
+int print_polygon(int n, int* coord)
+{
+	int i;
+	if (n < 2) 
+	{
+		return 1;
+	}
+	
+	for (i = 0; i < 2 * (n-1); i += 2)
+	{
+		print_line(coord[i],coord[i+1],coord[i+2],coord[i+3]);
+	}
+	print_line(coord[i],coord[i+1],coord[0],coord[1]);
+	
+	return 0;
+}
+
+
+/****************************************************************************
+* \brief Print circle to the OLED display using Bresenham's Circle Algorithm
+*
+* \param in X coordinate of circle center
+* \param in Y coordinate of circle center
+* \param in Radius of the circle
+****************************************************************************/
+void draw_circle(int xc, int yc, int r)
+{
+	int y = r;
+	int d = 3 - 2 * r;
+	
+	for (int x = 0; x < y; x++)
+	{
+		set_pixel(xc + x, yc + y);
+		set_pixel(xc - x, yc + y);
+		set_pixel(xc + x, yc - y);
+		set_pixel(xc - x, yc - y);
+		set_pixel(xc + y, yc + x);
+		set_pixel(xc - y, yc + x);
+		set_pixel(xc + y, yc - x);
+		set_pixel(xc - y, yc - x);
+
+		if (d < 0)
+		{
+			d = d + 4 * x + 6;
+		}
+		else
+		{
+			y--;
+			d = d + 4 * (x - y) + 10;
+		}
+	}
+}
+
+/****************************************************************************
+* \brief SCREENSAVER
+*
+****************************************************************************/
 void screensaver()
 {
 	static char x = 0;
@@ -262,32 +498,3 @@ void screensaver()
 	}
 	_delay_ms(10);
 }
-
-
-
-int set_position(unsigned int column, unsigned int page)
-{
-	if (column > 32)
-	{
-		return 1;
-	}
-	else if (page > 8)
-	{
-		return 1;
-	}
-		
-	position = page*128 + column*4;
-
-}
-
-
-int print_string(char* string)
-{
-	int lenght  = strlen(string);
-	for(int i=0; i<lenght;i++){
-		print_char(string[i]);
-	}
-}
-
-
-

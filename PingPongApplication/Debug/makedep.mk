@@ -4,13 +4,19 @@
 
 ADC_DRIVER.c
 
+CAN_DRIVER.c
+
 JOYSTICK_DRIVER.c
+
+MCP_DRIVER.c
 
 OLED_DRIVER.c
 
 PING_PONG_LIB.c
 
 PingPongApplication.c
+
+SPI_DRIVER.c
 
 USART_DRIVER.c
 

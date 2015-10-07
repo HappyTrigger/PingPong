@@ -9,78 +9,126 @@
 
 #include <avr/io.h>
 #include <stdio.h>
-//#include <avr/interrupt.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include "USART_DRIVER.h"
 #include "PING_PONG_LIB.h"
 #include "JOYSTICK_DRIVER.h"
 #include "OLED_DRIVER.h"
+#include "USER_INTERFACE.h"
+#include "SPI_DRIVER.h"
+#include "CAN_DRIVER.h"
+#include <avr/pgmspace.h>
+
+
+#include "MCP_ADDRESSES.h"
+#include "MCP_DRIVER.h"
 
 
 
 
 int main(void)
 {	
+
 	
 	clear_bit(DDRD, PD3);
 	clear_bit(DDRD, PD2);
 	
 	init();
+	volatile char SPIdata = 0;
 	TouchpadData data; 
 	int i = 0;
 	JoystickPosition position;
 	JoystickPosition calibration;
+	JoystickDirection direction;
+	JoystickDirection change_y, change_x;
+	ScreenName screen_name = 0;
 	calibration = joystick_calibration();
-	//sei();
+	CANMessage canMessage, canMessage2;
 	
 	//SRAM_test();
 	
-	init_oled();
+	CAN_init();
 	
 	clear_oled();
 	reset_position();
 	
+	clear_oled();
+	refresh_oled();
 	
+
 	
-	print_string(" Hello World ");
+	canMessage.ID = 0xAA;
+	canMessage.length = 1;
+	canMessage.data_array[0] = 0x10;
 	
-	set_position(1, 2);
+	canMessage2.ID = 0;
+	canMessage2.length = 0;
 	
-	print_string("You are so beautiful.... jk");
-	
-	
-	
+	printf("start\n");
+			
+	/*		
+			_delay_ms(1000);
+			
+			printf("%d\n", mcp_read(MCP_CANINTF));
+	*/
+	//sei();
 	while(1)
 	{
+		CAN_send_message(canMessage);
+		_delay_ms(10);
+		//cli();
+		i = CAN_receive_message(&canMessage2);
 		
-		//refresh_oled();
-		screensaver();
-
-
-
-
+		if (i == SUCCESS)
+		{
+			printf("Id = %d, length = %d\n", canMessage2.ID, canMessage2.length);
+			canMessage2.ID = 0;
+			canMessage2.length = 0;
+		}
+		else
+		{
+			printf("Nothing to receive\n");
+		}
 		
-	//	position = read_joystick_position(calibration);
+		canMessage.length = canMessage.length+1;
 		
-	//	printf("The x-axis is: %d  ", position.xaxis);
-	//	printf("  The y-axis is: %d \n ", position.yaxis);
+		if(canMessage.length==8){
+			canMessage.length=0;
+		}
 		
 		//_delay_ms(200);
 		
+		interface_state_machine(calibration);
+		/*printf("SPI start\n");
+		SPI_write(0x03);
+		SPI_write(0x0E);
+		printf("SPI something from the buffer %d\n", SPIdata);
+		SPIdata = SPI_read();
+		printf("SPI data received %d\n", SPIdata);
+		*/
+
 		
-	//	data = read_touchpad_data();
+		/*
+		printf("The x-axis is: %d  ", position.xaxis);
+		printf("  The y-axis is: %d \n ", position.yaxis);
 		
-	//	printf("The left pad is: %d  ", data.leftTouchPad);
-	//	printf("  The right pad is: %d \n ", data.rightTouchPad);
 		
-	//	if(data.rightButton || data.leftButton)
-	//	{
-	//		led_toggle();
-	//	}
+		
+		data = read_touchpad_data();
+		
+		printf("The left pad is: %d  ", data.leftTouchPad);
+		printf("  The right pad is: %d \n ", data.rightTouchPad);
+		
+		if(data.rightButton || data.leftButton)
+		{
+			led_toggle();
+		}
+		*/
+		
 		//SRAM_test();
 		//led_toggle();
 		//printf(" The value is: %d \n ", 2);
-		
 	}
 }
 

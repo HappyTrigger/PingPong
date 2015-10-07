@@ -5,8 +5,15 @@
  *  Author: haakongn
  */ 
 #include "ADC_DRIVER.h"
+
+#include <avr/delay.h>
+
 #include "PING_PONG_LIB.h"
 
+/****************************************************************************
+* \brief Read data from ADC
+*
+****************************************************************************/
 int read_adc(char channel)
 {
 	volatile char *ext_adc = (char *) ADC_BASE_ADDR;

@@ -125,10 +125,25 @@
     <Compile Include="ADC_DRIVER.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="CAN_DRIVER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CAN_DRIVER.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="JOYSTICK_DRIVER.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="JOYSTICK_DRIVER.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MCP_ADDRESSES.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MCP_DRIVER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MCP_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="OLED_DRIVER.c">
@@ -144,6 +159,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="PING_PONG_LIB.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SPI_DRIVER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SPI_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="USART_DRIVER.c">

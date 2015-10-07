@@ -7,7 +7,7 @@
  * 
  * \param ubrr Desired baud rate.
  ****************************************************************************/
-void USART_Init(unsigned int ubrr)
+void USART_init(unsigned int ubrr)
 {
 	//Set baud rate
 	UBRR0H = (unsigned char) (ubrr>>8);

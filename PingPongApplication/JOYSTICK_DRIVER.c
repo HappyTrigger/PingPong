@@ -4,10 +4,21 @@
  * Created: 10.09.2015 14:41:18
  *  Author: haakongn
  */ 
+
 #include "JOYSTICK_DRIVER.h"
+
+#include <avr/io.h>
+
 #include "PING_PONG_LIB.h"
 #include "ADC_DRIVER.h"
+#include <stdlib.h>
 
+/****************************************************************************
+* \brief Read joystick position and adjust it according to calibration data
+*
+* \param in calibration data
+* \return Joystick position
+****************************************************************************/
 JoystickPosition read_joystick_position(JoystickPosition calibration)
 {
 	JoystickPosition position;
@@ -21,16 +32,20 @@ JoystickPosition read_joystick_position(JoystickPosition calibration)
 	return position;
 }
 
-
+/****************************************************************************
+* \brief Read joystick direction according to joystick position data
+*
+* \return Joystick direction
+****************************************************************************/
 JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 {
 	JoystickDirection xAxes, yAxes, retVal;
 	
-	if (joystickPos.xaxis > 5)
+	if (joystickPos.xaxis > 20)
 	{
 		xAxes = Right;
 	}
-	else if (joystickPos.xaxis < -5)
+	else if (joystickPos.xaxis < -20)
 	{
 		xAxes = Left;
 	}
@@ -39,11 +54,11 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 		xAxes = Neutral;
 	}
 	
-	if (joystickPos.yaxis > 5)
+	if (joystickPos.yaxis > 20)
 	{
 		yAxes = Up;
 	}
-	else if (joystickPos.yaxis < -5)
+	else if (joystickPos.yaxis < -20)
 	{
 		yAxes = Down;
 	}
@@ -51,7 +66,7 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 		yAxes = Neutral; 
 	}
 	
-	if(ABS(joystickPos.yaxis) > ABS(joystickPos.xaxis))
+	if(abs(joystickPos.yaxis) > abs(joystickPos.xaxis))
 	{
 		retVal = yAxes;
 	}
@@ -64,55 +79,134 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 }
 
 
-
-JoystickPosition joystick_calibration(){
+/****************************************************************************
+* \brief Calibrate joystick
+*
+* \return Joystick calibration data
+****************************************************************************/
+JoystickPosition joystick_calibration()
+{
 	
 	JoystickPosition position;
-	int i = 0;
 	position.xaxis = read_adc(ADC_CH2);
 	position.yaxis = read_adc(ADC_CH1);
 	position.xaxis -= 127;
 	position.yaxis -= 127;
 
-	
-	//for (i = 0; i < 100; i++)
-	//{
-		//position.xaxis += read_adc(ADC_CH2);
-		//position.yaxis += read_adc(ADC_CH1);
-		//_delay_ms(2);
-	//}
-	//position.xaxis /= 100;
-	//position.yaxis /= 100;
-	//position.xaxis -= 127;
-	//position.yaxis -= 127;
-	//
-	return position;
-	
-	
+	return position;	
 }
 
-#define ADC_CH1 0b00000100 // X axis
-#define ADC_CH2 0b00000101 // Y axis
-#define ADC_CH3 0b00000110 // Slider right
-#define ADC_CH4 0b00000111 // Slider left
-
-TouchpadData read_touchpad_data(){
+/****************************************************************************
+* \brief Read Touchpad data
+*
+* \return Touchpad data
+****************************************************************************/
+TouchpadData read_touchpad_data()
+{
 	TouchpadData touchpad;
 	touchpad.rightTouchPad = read_adc(ADC_CH3);
 	touchpad.leftTouchPad = read_adc(ADC_CH4);
 	
-	if(test_bit(PIND, PD3)){
+	if(test_bit(BUTTON_PORT, LEFT_BUTTON_PIN))
+	{
 		touchpad.leftButton = 1;
-		printf("Left button pressed \n");
-	}else{
+	}
+	else
+	{
 		touchpad.leftButton = 0;
 	}
-	if(test_bit(PIND, PD2)){
+	if(test_bit(BUTTON_PORT, RIGHT_BUTTON_PIN))
+	{
 		touchpad.rightButton = 1;
-		printf("Right button pressed \n");
-	}else{
-		touchpad.rightButton = 0;
-		
+	}
+	else
+	{
+		touchpad.rightButton = 0;	
 	}
 	return touchpad;
+}
+
+/***********************************************************************************
+* \brief Calculates the change in x axis position since last call of the function
+*
+* \return Direction of joystick
+***********************************************************************************/
+JoystickDirection change_xaxis(JoystickDirection direction)
+{
+	static JoystickDirection old_x_direction = Neutral;
+	
+	if(direction!= Right && direction != Left)
+	{
+		old_x_direction = Neutral;
+		return Neutral;
+	}
+		
+	if (old_x_direction != direction)
+	{
+		old_x_direction = direction;
+		return direction;
+	}
+		
+	old_x_direction = direction;
+	return Neutral;
+}
+
+/***********************************************************************************
+* \brief Calculates the change in y axis position since last call of the function
+*
+* \return Direction of joystick
+***********************************************************************************/
+JoystickDirection change_yaxis(JoystickDirection direction){
+	static JoystickDirection old_y_direction = Neutral;
+	
+	if(direction!= Up && direction != Down)
+	{
+		old_y_direction = Neutral;
+		return Neutral;
+	}
+		
+	if (old_y_direction != direction)
+	{
+		old_y_direction = direction;
+		return direction;
+	}
+	
+	old_y_direction = direction;
+	return Neutral;
+}
+
+/***********************************************************************************
+* \brief Return the change in touch button
+*
+* \return True if the position of particular touch button changed
+***********************************************************************************/
+ChangeTouchpadData change_touchpad_data(TouchpadData new_touchpad_data)
+{
+	static TouchpadData old_touchpad_data;
+	ChangeTouchpadData ret_val;
+	
+	ret_val.rightButton = 0;
+	ret_val.leftButton = 0;
+	
+	if (old_touchpad_data.leftButton == 0 && new_touchpad_data.leftButton == 1)
+	{
+		old_touchpad_data.leftButton = 1;
+		ret_val.leftButton = 1;
+	}
+	else if (old_touchpad_data.leftButton == 1 && new_touchpad_data.leftButton == 0)
+	{
+		old_touchpad_data.leftButton = 0;
+	}
+	
+	if (old_touchpad_data.rightButton == 0 && new_touchpad_data.rightButton == 1)
+	{
+		old_touchpad_data.rightButton =1;
+		ret_val.rightButton = 1;
+	}
+	else if (old_touchpad_data.rightButton == 1 && new_touchpad_data.rightButton == 0)
+	{
+		old_touchpad_data.rightButton = 0;
+	}
+	
+	return ret_val;
 }

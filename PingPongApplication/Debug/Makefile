@@ -38,10 +38,13 @@ SUBDIRS :=
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../ADC_DRIVER.c \
+../CAN_DRIVER.c \
 ../JOYSTICK_DRIVER.c \
+../MCP_DRIVER.c \
 ../OLED_DRIVER.c \
 ../PING_PONG_LIB.c \
 ../PingPongApplication.c \
+../SPI_DRIVER.c \
 ../USART_DRIVER.c \
 ../USER_INTERFACE.c
 
@@ -54,37 +57,49 @@ ASM_SRCS +=
 
 OBJS +=  \
 ADC_DRIVER.o \
+CAN_DRIVER.o \
 JOYSTICK_DRIVER.o \
+MCP_DRIVER.o \
 OLED_DRIVER.o \
 PING_PONG_LIB.o \
 PingPongApplication.o \
+SPI_DRIVER.o \
 USART_DRIVER.o \
 USER_INTERFACE.o
 
 OBJS_AS_ARGS +=  \
 ADC_DRIVER.o \
+CAN_DRIVER.o \
 JOYSTICK_DRIVER.o \
+MCP_DRIVER.o \
 OLED_DRIVER.o \
 PING_PONG_LIB.o \
 PingPongApplication.o \
+SPI_DRIVER.o \
 USART_DRIVER.o \
 USER_INTERFACE.o
 
 C_DEPS +=  \
 ADC_DRIVER.d \
+CAN_DRIVER.d \
 JOYSTICK_DRIVER.d \
+MCP_DRIVER.d \
 OLED_DRIVER.d \
 PING_PONG_LIB.d \
 PingPongApplication.d \
+SPI_DRIVER.d \
 USART_DRIVER.d \
 USER_INTERFACE.d
 
 C_DEPS_AS_ARGS +=  \
 ADC_DRIVER.d \
+CAN_DRIVER.d \
 JOYSTICK_DRIVER.d \
+MCP_DRIVER.d \
 OLED_DRIVER.d \
 PING_PONG_LIB.d \
 PingPongApplication.d \
+SPI_DRIVER.d \
 USART_DRIVER.d \
 USER_INTERFACE.d
 
@@ -102,6 +117,12 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
 
 
 

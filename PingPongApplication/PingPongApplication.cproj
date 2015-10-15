@@ -131,6 +131,12 @@
     <Compile Include="CAN_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="COM_LIB.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="COM_LIB.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="JOYSTICK_DRIVER.c">
       <SubType>compile</SubType>
     </Compile>

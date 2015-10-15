@@ -7,13 +7,11 @@
 
 #include "CAN_DRIVER.h"
 #include "MCP_DRIVER.h"
-#include "SPI_DRIVER.h"
 #include <avr/io.h>
 #include "PING_PONG_LIB.h"
 #include <stdint.h>
-#include <avr/interrupt.h>
-#include <stdio.h>
-#include <avr/delay.h>
+//#include <avr/interrupt.h>
+//#include <avr/delay.h>
 
 void CAN_init()
 {
@@ -21,7 +19,7 @@ void CAN_init()
 	/* Turn off mask/filters, receive any message, rollover enabled */
 	mcp_modify_bit(MCP_RXB0CTRL, 0b01100100, 0xFF);
 	/* Loopback mode enabled */
-	mcp_modify_bit(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);	
+	mcp_modify_bit(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
 	/* Interrupt after received buffer 0 */
 	//mcp_modify_bit(MCP_CANINTE, 0x01, 0x01);
 	/*
@@ -57,13 +55,6 @@ uint8_t CAN_send_message(CANMessage message)
 	
 	mcp_request_to_send(1);
 
-	//ctrl = mcp_read(MCP_TXB0CTRL);
-	//cli();
-	//printf("%d\n", ctrl);
-	/*if(test_bit(ctrl, TXREQ | ))
-	{
-	}*/
-	
 	return SUCCESS;
 }
 

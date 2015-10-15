@@ -23,6 +23,7 @@
 
 #include "MCP_ADDRESSES.h"
 #include "MCP_DRIVER.h"
+#include "COM_LIB.h"
 
 
 
@@ -30,7 +31,6 @@
 int main(void)
 {	
 
-	
 	clear_bit(DDRD, PD3);
 	clear_bit(DDRD, PD2);
 	
@@ -75,14 +75,14 @@ int main(void)
 	//sei();
 	while(1)
 	{
-		CAN_send_message(canMessage);
-		_delay_ms(10);
+		//CAN_send_message(canMessage);
+		_delay_ms(200);
 		//cli();
 		i = CAN_receive_message(&canMessage2);
 		
 		if (i == SUCCESS)
 		{
-			printf("Id = %d, length = %d\n", canMessage2.ID, canMessage2.length);
+			//printf("%d, length = %d, message %d\n", canMessage2.ID, canMessage2.length, canMessage2.data_array[0]);
 			canMessage2.ID = 0;
 			canMessage2.length = 0;
 		}
@@ -91,40 +91,27 @@ int main(void)
 			printf("Nothing to receive\n");
 		}
 		
-		canMessage.length = canMessage.length+1;
-		
-		if(canMessage.length==8){
-			canMessage.length=0;
-		}
-		
 		//_delay_ms(200);
 		
-		interface_state_machine(calibration);
-		/*printf("SPI start\n");
-		SPI_write(0x03);
-		SPI_write(0x0E);
-		printf("SPI something from the buffer %d\n", SPIdata);
-		SPIdata = SPI_read();
-		printf("SPI data received %d\n", SPIdata);
-		*/
-
+		//interface_state_machine(calibration);
+	
+		position = read_joystick_position(calibration);
 		
-		/*
 		printf("The x-axis is: %d  ", position.xaxis);
 		printf("  The y-axis is: %d \n ", position.yaxis);
 		
-		
+		send_joystick_possition(position);
 		
 		data = read_touchpad_data();
 		
-		printf("The left pad is: %d  ", data.leftTouchPad);
-		printf("  The right pad is: %d \n ", data.rightTouchPad);
-		
-		if(data.rightButton || data.leftButton)
+		//printf("The left pad is: %d  ", data.leftTouchPad);
+		//printf("  The right pad is: %d \n ", data.rightTouchPad);
+
+		/*if(data.rightButton || data.leftButton)
 		{
 			led_toggle();
-		}
-		*/
+		}*/
+
 		
 		//SRAM_test();
 		//led_toggle();

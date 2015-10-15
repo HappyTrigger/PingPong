@@ -9,6 +9,8 @@
 #ifndef JOYSTICK_DRIVER_H_
 #define JOYSTICK_DRIVER_H_
 
+#include <stdint.h>
+
 #define BUTTON_PORT PIND
 #define RIGHT_BUTTON_PIN PD4
 #define LEFT_BUTTON_PIN PD5

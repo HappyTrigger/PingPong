@@ -14,6 +14,7 @@
 #include "USER_INTERFACE.h"
 
 
+
 /****************************************************************************
 * \brief Initialize all important peripherals and pins
 *
@@ -89,3 +90,5 @@ void SRAM_test(void)
 	}
 	printf("SRAM test completed with %d errors in write phase and %d errors in read phase\r\n", werrors, rerrors);
 }
+
+

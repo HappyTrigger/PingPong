@@ -6,7 +6,7 @@ extern "C" {
 #include "MCP_ADDRESSES.h"
 #include "SPI_DRIVER.h"
 #include "COM_LIB.h"
-#include "SERVO_DRIVER.h"
+//#include "SERVO_DRIVER.h"
 }
 
 #include <Servo.h>
@@ -15,8 +15,6 @@ CANMessage message, message2;
 JoystickPosition j_position;
 TouchpadData t_data;
 Servo myservo;
-uint8_t temp;
-
 
 void setup()
 {
@@ -26,8 +24,7 @@ void setup()
 	message.ID = 0x12;
 	message.length = 1;
 	message.data_array[0] = 0x92;
-	myservo.attach(9, 900,2100);
-
+	myservo.attach(5, 900,2100);
 }
 
 void loop()
@@ -44,12 +41,15 @@ void loop()
   //Serial.print(message.data_array[0]);
   //Serial.println(".");
 
-
-
+for (int i = 0; i < 180; i++)
+{
+	myservo.write(i);
+	delay(500);
+}
+/*
   if( SUCCESS == receive_and_decode_message(&j_position, &t_data))
   {
-  
-    /*Serial.print(j_position.xaxis);
+    Serial.print(j_position.xaxis);
     Serial.print(", ");
     Serial.print(j_position.yaxis);
     Serial.println(".");
@@ -58,20 +58,13 @@ void loop()
     Serial.print(", ");
     Serial.print(t_data.leftTouchPad);
     Serial.println(".");
-  
+   
     Serial.print(t_data.rightButton);
     Serial.print(", ");
     Serial.print(t_data.leftButton);
-    Serial.println(".");*/
-    Serial.println(j_position.xaxis);
-    temp = map(j_position.xaxis, 0, 255, 0, 180);
-    Serial.println(temp);
-    //Serial.println(t_data.rightTouchPad);
-    //Serial.println(t_data.leftTouchPad);
-    myservo.write(temp);
-    //Serial.println(is_IR_interrupted());
+    Serial.println(".");
   }
-
+*/
   //CAN_receive_message(&message2);
   
 }

@@ -21,8 +21,8 @@
 ****************************************************************************/
 typedef struct JoystickPosition
 {
-	volatile int xaxis;
-	volatile int yaxis;
+	volatile uint8_t xaxis;
+	volatile uint8_t yaxis;
 } JoystickPosition;
 
 /****************************************************************************
@@ -31,10 +31,10 @@ typedef struct JoystickPosition
 ****************************************************************************/
 typedef struct TouchpadData
 {
-	volatile int rightTouchPad;
-	volatile int leftTouchPad;
-	volatile char rightButton;
-	volatile char leftButton;
+	volatile uint8_t rightTouchPad;
+	volatile uint8_t leftTouchPad;
+	volatile uint8_t rightButton;
+	volatile uint8_t leftButton;
 } TouchpadData;
 
 typedef struct ChangeTouchpadData

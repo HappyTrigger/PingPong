@@ -76,9 +76,9 @@ int main(void)
 	while(1)
 	{
 		//CAN_send_message(canMessage);
-		_delay_ms(200);
+		//_delay_ms(200);
 		//cli();
-		i = CAN_receive_message(&canMessage2);
+		/*i = CAN_receive_message(&canMessage2);
 		
 		if (i == SUCCESS)
 		{
@@ -89,24 +89,31 @@ int main(void)
 		else
 		{
 			printf("Nothing to receive\n");
-		}
+		}*/
 		
 		//_delay_ms(200);
 		
 		//interface_state_machine(calibration);
 	
 		position = read_joystick_position(calibration);
+		data = read_touchpad_data();
 		
 		printf("The x-axis is: %d  ", position.xaxis);
 		printf("  The y-axis is: %d \n ", position.yaxis);
-		
+		//_delay_ms(100);
 		send_joystick_possition(position);
-		
-		data = read_touchpad_data();
+		_delay_ms(1);
+		send_touchpad_possition(data);
+		//send_joystick_possition(position);
 		
 		//printf("The left pad is: %d  ", data.leftTouchPad);
 		//printf("  The right pad is: %d \n ", data.rightTouchPad);
-
+		_delay_ms(1);
+		//send_touchpad_possition(data);
+		
+		//_delay_ms(100);
+		//send_buttons_status(data);
+		
 		/*if(data.rightButton || data.leftButton)
 		{
 			led_toggle();

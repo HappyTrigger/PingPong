@@ -27,7 +27,7 @@ JoystickPosition read_joystick_position(JoystickPosition calibration)
 	//position.xaxis = ((((position.xaxis - calibration.xaxis)*100)/255)-50)*2;
 
 	position.yaxis = read_adc(ADC_CH1);
-//	position.yaxis = ((((position.yaxis - calibration.yaxis)*100)/255)-50)*2;
+	//position.yaxis = ((((position.yaxis - calibration.yaxis)*100)/255)-50)*2;
 	
 	return position;
 }

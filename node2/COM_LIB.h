@@ -10,6 +10,7 @@
 #define COM_LIB_H_
 
 #include <stdint.h>
+#include "CAN_DRIVER.h"
 
 typedef struct JoystickPosition
 {
@@ -17,7 +18,18 @@ typedef struct JoystickPosition
 	volatile uint8_t yaxis;
 } JoystickPosition;
 
-uint8_t receive_joistick_position(JoystickPosition* joystick_position);
+typedef struct TouchpadData
+{
+  volatile uint8_t rightTouchPad;
+  volatile uint8_t leftTouchPad;
+  volatile uint8_t rightButton;
+  volatile uint8_t leftButton;
+} TouchpadData;
+
+uint8_t receive_and_decode_message(JoystickPosition* joystick_position, TouchpadData* touchpad_data);
+uint8_t receive_joistick_position(JoystickPosition* joystick_position, CANMessage message);
+uint8_t receive_touchpad_data(TouchpadData* touchpad_data, CANMessage message);
+uint8_t receive_button_data(TouchpadData* touchpad_data, CANMessage message);
 JoystickPosition Joystick_pwm(JoystickPosition* joystick_position);
 
 

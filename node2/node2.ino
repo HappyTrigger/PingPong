@@ -1,52 +1,67 @@
+#include "DAC_DRIVER.h"
+#include "CONTROL_DRIVER.h"
 
 
 extern "C" {
-#include "CAN_DRIVER.h"
+#include "CONTROL_DRIVER.h"
 #include "MCP_DRIVER.h"
 #include "MCP_ADDRESSES.h"
 #include "SPI_DRIVER.h"
 #include "COM_LIB.h"
 #include "SERVO_DRIVER.h"
+#include "DAC_DRIVER.h"
+#include "CONTROL_DRIVER.h"
 }
 
 #include <Servo.h>
+#include <Wire.h>
 
 CANMessage message, message2;
 JoystickPosition j_position;
 TouchpadData t_data;
+Mode g_mode;
 Servo myservo;
 uint8_t temp;
 
 
+uint8_t x;
+uint8_t dir;
+
+
 void setup()
 {
-	pinMode(53, OUTPUT);
+	//dac_init();
+  pinMode(A3, OUTPUT);
+  pinMode(53, OUTPUT);
+  pinMode(A5, OUTPUT);
+  pinMode(A6, OUTPUT);
+  pinMode(A12, OUTPUT);
+
+
+
+  digitalWrite(A3, LOW);
+  digitalWrite(A5, HIGH);
+  digitalWrite(A6, HIGH);
+  
+  
 	Serial.begin(9600);
+	
+	//Can init
 	CAN_init();
-	message.ID = 0x12;
-	message.length = 1;
-	message.data_array[0] = 0x92;
+
+	//Servo Init
 	myservo.attach(9, 900,2100);
 
+
+  Wire.begin();
+  x = 0;
+  dir = 0;
 }
 
 void loop()
 {
-  ///message2.ID = 0x00;
-  //message2.length = 0;
-  //message2.data_array[0] = 0x00;
-  
-	//CAN_send_message(message);
-  //Serial.print(message.ID);
-  //Serial.print(", ");
-  //Serial.print(message.length);
-  //Serial.print(", ");
-  //Serial.print(message.data_array[0]);
-  //Serial.println(".");
 
-
-
-  if( SUCCESS == receive_and_decode_message(&j_position, &t_data))
+  if( SUCCESS == receive_and_decode_message(&j_position, &t_data, &g_mode))
   {
   
     /*Serial.print(j_position.xaxis);
@@ -63,15 +78,20 @@ void loop()
     Serial.print(", ");
     Serial.print(t_data.leftButton);
     Serial.println(".");*/
-    Serial.println(j_position.xaxis);
     temp = map(j_position.xaxis, 0, 255, 0, 180);
-    Serial.println(temp);
-    //Serial.println(t_data.rightTouchPad);
-    //Serial.println(t_data.leftTouchPad);
     myservo.write(temp);
+    Serial.println(temp);
+    
     //Serial.println(is_IR_interrupted());
-  }
 
-  //CAN_receive_message(&message2);
-  
+   //speed_controller(temp);
+    Wire.beginTransmission(0b0101000); // transmit to device #8
+    Wire.write(0);
+    Wire.write(temp);              // sends one byte
+    Wire.endTransmission();    // stop transmitting
+    delay(1000);
+    digitalWrite(A12, HIGH);
+    delay(1000);
+    digitalWrite(A12, LOW);
+  }  
 }

@@ -31,6 +31,8 @@ typedef enum
 	State_Mode
 } InterfaceState;
 
+
+
 void interface_init();
 
 void interface_state_machine(JoystickPosition calibration); 

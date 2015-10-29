@@ -7,6 +7,7 @@
 
 #include "USER_INTERFACE.h"
 #include "PING_PONG_LIB.h"
+#include "COM_LIB.h"
 #include <avr/eeprom.h>
 #include <stdio.h>
 
@@ -257,14 +258,19 @@ InterfaceState interface_new_game(JoystickPosition calibration)
 			switch(scr_position)
 			{
 				case 0:
+					send_game_mode(Tutorial);
 					return State_Tutorial;
 				case 1:
+					send_game_mode(Easy);
 					return State_Easy;
 				case 2:
+					send_game_mode(Normal);
 					return State_Normal;
 				case 3:
+					send_game_mode(Hard);
 					return State_Hard;
 				case 4:
+					send_game_mode(Insane);
 					return State_Insane;
 			}
 		}
@@ -465,9 +471,11 @@ InterfaceState interface_mode(JoystickPosition calibration)
 			switch(scr_position)
 			{
 				case 0:
+					send_game_mode(Normal_settings);
 					printf("Normal\n");
 					break;
 				case 1:
+					send_game_mode(Reverse_settings);
 					printf("Reverse\n");
 					break;
 			}

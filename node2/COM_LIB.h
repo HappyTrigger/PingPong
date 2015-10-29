@@ -26,11 +26,15 @@ typedef struct TouchpadData
   volatile uint8_t leftButton;
 } TouchpadData;
 
-uint8_t receive_and_decode_message(JoystickPosition* joystick_position, TouchpadData* touchpad_data);
-uint8_t receive_joistick_position(JoystickPosition* joystick_position, CANMessage message);
-uint8_t receive_touchpad_data(TouchpadData* touchpad_data, CANMessage message);
-uint8_t receive_button_data(TouchpadData* touchpad_data, CANMessage message);
+typedef struct Mode
+{
+  volatile uint8_t gamemode;
+}Mode;
+
+uint8_t receive_and_decode_message(JoystickPosition* joystick_position, TouchpadData* touchpad_data, Mode* game_mode);
+uint8_t receive_joistick_position(JoystickPosition* joystick_position, TouchpadData* touchpad_data, CANMessage message);
 JoystickPosition Joystick_pwm(JoystickPosition* joystick_position);
+uint8_t receive_mode_change(Mode* CurrentMode, CANMessage message);
 
 
 #endif /* COM_LIB_H_ */

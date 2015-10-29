@@ -101,9 +101,9 @@ int main(void)
 		printf("The x-axis is: %d  ", position.xaxis);
 		printf("  The y-axis is: %d \n ", position.yaxis);
 		//_delay_ms(100);
-		send_joystick_possition(position);
+		send_joystick_possition(position, data);
 		_delay_ms(1);
-		send_touchpad_possition(data);
+		//send_touchpad_possition(data);
 		//send_joystick_possition(position);
 		
 		//printf("The left pad is: %d  ", data.leftTouchPad);

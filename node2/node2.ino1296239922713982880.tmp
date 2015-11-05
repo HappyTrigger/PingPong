@@ -1,19 +1,19 @@
-#include "DAC_DRIVER.h"
-#include "CONTROL_DRIVER.h"
+
+
 extern "C" {
+#include "CONTROL_DRIVER.h"
 #include "MCP_DRIVER.h"
 #include "MCP_ADDRESSES.h"
 #include "SPI_DRIVER.h"
 #include "COM_LIB.h"
 #include "SERVO_DRIVER.h"
+#include "CONTROL_DRIVER.h"
 }
 
 #include <Servo.h>
 #include <Wire.h>
 
-
-#define SHOOTING_PIN 7
-
+#include "DAC_DRIVER.h"
 
 CANMessage message, message2;
 JoystickPosition j_position;
@@ -45,17 +45,7 @@ void setup()
   
   //DAC init
   dac_init();
-  //encoder_calibration();
-  temp_bit = return_max();
-  Serial.println(temp_bit);
-  delay(1000);
-
-  //Shooting-mech
- // pinMode(SHOOTING_PIN, OUTPUT);
-
-
-  
-  
+  encoder_calibration();
 }
 
 void loop()
@@ -84,24 +74,21 @@ void loop()
    // temp = map(j_position.xaxis, 0, 255, 0, 180);
    //myservo.write(temp);
     //Serial.println(temp);
-   Serial.println(t_data.rightButton);
+
    //Shooting_mech
    if(t_data.rightButton == 1){
-     // digitalWrite(SHOOTING_PIN, LOW);
-    //  delay(100);
-    //  digitalWrite(SHOOTING_PIN, HIGH);
+    
    }
-
-   
+    
     //MotorSpeed
     temp = map(j_position.xaxis, 0, 255, -100, 100);
     temp=speed_controller(temp);
     //Serial.println(temp);
-    //dac_write(temp);
+    dac_write(temp);
 
     
     temp_bit = read_encoder();
-    //Serial.println(temp_bit);
+    Serial.println(temp_bit);
     
     
     //Serial.println(is_IR_interrupted());
@@ -111,5 +98,12 @@ void loop()
 }
 
 
+void dac_write(int8_t value)
+{
+    Wire.beginTransmission(0b0101000); // transmit to device #8
+    Wire.write(0);                   //Command 
+    Wire.write(value);              // sends one byte
+    Wire.endTransmission();    // stop transmitting
+}
 
 

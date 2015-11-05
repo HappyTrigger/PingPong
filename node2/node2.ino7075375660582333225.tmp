@@ -51,8 +51,7 @@ void setup()
   delay(1000);
 
   //Shooting-mech
- // pinMode(SHOOTING_PIN, OUTPUT);
-
+  pinMode(SHOOTING_PIN, OUTPUT);
 
   
   
@@ -87,9 +86,9 @@ void loop()
    Serial.println(t_data.rightButton);
    //Shooting_mech
    if(t_data.rightButton == 1){
-     // digitalWrite(SHOOTING_PIN, LOW);
-    //  delay(100);
-    //  digitalWrite(SHOOTING_PIN, HIGH);
+      digitalWrite(SHOOTING_PIN, LOW);
+      delay(100);
+      digitalWrite(SHOOTING_PIN, HIGH);
    }
 
    

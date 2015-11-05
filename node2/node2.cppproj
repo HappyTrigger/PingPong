@@ -290,6 +290,9 @@ vm.boardsource.path=C:\Program Files (x86)\Arduino\hardware\arduino\avr
 runtime.platform.path=C:\Program Files (x86)\Arduino\hardware\arduino\avr
 vm.platformname.name=avr
 build.arch=AVR
+build.architecture=avr
+vmresolved.compiler.path=C:\Program Files (x86)\Arduino\hardware\tools\avr\bin\
+vmresolved.tools.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
 </arduino.board.property_bag>
         <arduino.build.mcu>atmega2560</arduino.build.mcu>
         <arduino.build.f_cpu>16000000L</arduino.build.f_cpu>
@@ -554,6 +557,9 @@ vm.boardsource.path=C:\Program Files (x86)\Arduino\hardware\arduino\avr
 runtime.platform.path=C:\Program Files (x86)\Arduino\hardware\arduino\avr
 vm.platformname.name=avr
 build.arch=AVR
+build.architecture=avr
+vmresolved.compiler.path=C:\Program Files (x86)\Arduino\hardware\tools\avr\bin\
+vmresolved.tools.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
 </arduino.board.property_bag>
         <arduino.build.mcu>atmega2560</arduino.build.mcu>
         <arduino.build.f_cpu>16000000L</arduino.build.f_cpu>
@@ -594,7 +600,7 @@ build.arch=AVR
     <Compile Include="CONTROL_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="DAC_DRIVER.c">
+    <Compile Include="DAC_DRIVER.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="DAC_DRIVER.h">

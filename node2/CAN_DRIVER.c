@@ -12,6 +12,10 @@
 //#include <avr/interrupt.h>
 //#include <avr/delay.h>
 
+/****************************************************************************
+* \brief Initialize CAN communication with main board
+*
+****************************************************************************/
 void CAN_init()
 {
 	mcp_init();
@@ -21,7 +25,12 @@ void CAN_init()
 	mcp_modify_bit(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
 }
 
-
+/****************************************************************************
+* \brief Send a message through CAN to main board
+*
+* \param in message
+* \return result of the CAN operation
+****************************************************************************/
 uint8_t CAN_send_message(CANMessage message)
 {
 	uint8_t ctrl = mcp_read(MCP_TXB0CTRL);
@@ -47,6 +56,12 @@ uint8_t CAN_send_message(CANMessage message)
 	return SUCCESS;
 }
 
+/****************************************************************************
+* \brief Receive a message from node 2 through CAN
+*
+* \param out message
+* \return result of the CAN operation
+****************************************************************************/
 uint8_t CAN_receive_message(CANMessage* message)
 {
 	int i = 0;

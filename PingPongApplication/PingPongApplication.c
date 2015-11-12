@@ -18,12 +18,15 @@
 #include "USER_INTERFACE.h"
 #include "SPI_DRIVER.h"
 #include "CAN_DRIVER.h"
+#include "EEPROM.h"
 #include <avr/pgmspace.h>
+#include <string.h>
 
 
 #include "MCP_ADDRESSES.h"
 #include "MCP_DRIVER.h"
 #include "COM_LIB.h"
+
 
 
 
@@ -44,7 +47,9 @@ int main(void)
 	JoystickDirection change_y, change_x;
 	ScreenName screen_name = 0;
 	calibration = joystick_calibration();
-	CANMessage canMessage, canMessage2;
+	CANMessage canMessage, canMessageNode2;
+	My_Game_Mode game_mode;
+	high_score scores, score_read;
 	
 	//SRAM_test();
 	
@@ -62,67 +67,59 @@ int main(void)
 	canMessage.length = 1;
 	canMessage.data_array[0] = 0x10;
 	
-	canMessage2.ID = 0;
-	canMessage2.length = 0;
 	
 	printf("start\n");
-			
-	/*		
-			_delay_ms(1000);
-			
-			printf("%d\n", mcp_read(MCP_CANINTF));
+	
+	/*
+	strncpy ( scores.username[0], "AAAA\0", 5 );
+	strncpy ( scores.username[1], "BBBB\0", 5 );
+	strncpy ( scores.username[2], "asfg\0", 5 );
+	strncpy ( scores.username[3], "dfjd\0", 5 );
+	strncpy ( scores.username[4], "REFW\0", 5 );
+	scores.score[0] = 32;
+	scores.score[1] = 22;
+	scores.score[2] = 12;
+	scores.score[3] = 8;
+	scores.score[4] = 3;
+	
+	high_score_write(scores);
 	*/
 	//sei();
 	while(1)
 	{
-		//CAN_send_message(canMessage);
-		//_delay_ms(200);
-		//cli();
-		/*i = CAN_receive_message(&canMessage2);
-		
-		if (i == SUCCESS)
-		{
-			//printf("%d, length = %d, message %d\n", canMessage2.ID, canMessage2.length, canMessage2.data_array[0]);
-			canMessage2.ID = 0;
-			canMessage2.length = 0;
-		}
-		else
-		{
-			printf("Nothing to receive\n");
-		}*/
-		
-		//_delay_ms(200);
-		
-		//interface_state_machine(calibration);
+		interface_state_machine(calibration, State_NewGame);
 	
 		position = read_joystick_position(calibration);
 		data = read_touchpad_data();
 		
-		printf("The x-axis is: %d  ", position.xaxis);
-		printf("  The y-axis is: %d \n ", position.yaxis);
-		//_delay_ms(100);
 		send_joystick_possition(position, data);
-		_delay_ms(1);
-		//send_touchpad_possition(data);
-		//send_joystick_possition(position);
-		
-		//printf("The left pad is: %d  ", data.leftTouchPad);
-		//printf("  The right pad is: %d \n ", data.rightTouchPad);
-		_delay_ms(1);
-		//send_touchpad_possition(data);
-		
-		//_delay_ms(100);
-		//send_buttons_status(data);
-		
-		/*if(data.rightButton || data.leftButton)
-		{
-			led_toggle();
-		}*/
+		_delay_ms(1);	
 
+		
+		
+		if(CAN_receive_message(&canMessageNode2)==SUCCESS)
+		{
+			printf("#%d. %s : %d\n", 1, 2, 3);
+			receive_mode_change(&game_mode, canMessageNode2);
+			if(game_mode.gamemode == Endgame)
+			{
+				interface_state_machine(calibration, State_Endgame);
+			}
+		}
+		
+		
+		
+		//score_read = high_score_read();
+		
+		
+		
+		//for (i = 0; i < 5; i++)
+		//{
+			//printf("#%d. %s : %d\n", i, score_read.username[i], score_read.score[i]);
+		//}
 		
 		//SRAM_test();
 		//led_toggle();
-		//printf(" The value is: %d \n ", 2);
 	}
 }
 

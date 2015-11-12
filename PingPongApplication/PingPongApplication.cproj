@@ -137,6 +137,12 @@
     <Compile Include="COM_LIB.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="EEPROM.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="JOYSTICK_DRIVER.c">
       <SubType>compile</SubType>
     </Compile>

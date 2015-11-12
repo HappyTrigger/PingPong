@@ -5,10 +5,15 @@
  *  Author: michalma
  */ 
 #include "COM_LIB.h"
-#include "CAN_DRIVER.h"
 #include "JOYSTICK_DRIVER.h"
 
-
+/****************************************************************************
+* \brief Send joystick position to Node2 trough CAN
+*
+* \param in joystick position
+* \param in touchpad data
+* \return result of the CAN send operation
+****************************************************************************/
 uint8_t send_joystick_possition(JoystickPosition joystick_position, TouchpadData touchpad_data)
 {
 	CANMessage message;
@@ -27,8 +32,14 @@ uint8_t send_joystick_possition(JoystickPosition joystick_position, TouchpadData
 	return CAN_send_message(message);
 }
 
-
-uint8_t send_game_mode(GameModes mode){
+/****************************************************************************
+* \brief Send game mode through CAN
+*
+* \param in game mode
+* \return result of the CAN send operation
+****************************************************************************/
+uint8_t send_game_mode(GameModes mode)
+{
 	CANMessage message;
 	message.ID = 0x02;
 	message.length = 1;
@@ -36,4 +47,10 @@ uint8_t send_game_mode(GameModes mode){
 	message.data_array[0]= (uint8_t) (mode);
 	
 	return CAN_send_message(message);
+}
+
+
+void receive_mode_change(My_Game_Mode* CurrentMode, CANMessage message)
+{
+	CurrentMode->gamemode = message.data_array[0];
 }

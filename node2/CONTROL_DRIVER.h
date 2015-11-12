@@ -11,16 +11,19 @@
 #define MJ1_EN A4
 #define MJ1_DIR A3
 
-#define DIR_RIGHT LOW
-#define DIR_LEFT HIGH
+#define DIR_RIGHT HIGH
+#define DIR_LEFT LOW
 
 #define MJ2_PORT PORTK
 #define MJ2_PIN PINK
 #define MJ2_DDR DDRK
 
+
+
+
 void control_init();
 
-int8_t speed_controller(int8_t speed_value);
+void speed_controller(uint16_t speed_value, uint8_t motor_direction);
 
 uint8_t reverse_byte_input(uint8_t input);
 
@@ -30,7 +33,7 @@ int16_t return_max();
 
 int16_t read_encoder();
 
-void position_controller(uint8_t position_value)
+int position_controller(uint8_t position_value);
 
 
 #endif

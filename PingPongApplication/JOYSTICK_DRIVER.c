@@ -200,7 +200,7 @@ ChangeTouchpadData change_touchpad_data(TouchpadData new_touchpad_data)
 	
 	if (old_touchpad_data.rightButton == 0 && new_touchpad_data.rightButton == 1)
 	{
-		old_touchpad_data.rightButton =1;
+		old_touchpad_data.rightButton = 1;
 		ret_val.rightButton = 1;
 	}
 	else if (old_touchpad_data.rightButton == 1 && new_touchpad_data.rightButton == 0)

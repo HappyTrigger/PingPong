@@ -1,4 +1,4 @@
-C:\Users\TEMP\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\HardwareSerial.cpp.o: \
+C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\HardwareSerial.cpp.o: \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino\HardwareSerial.cpp \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino\binary.h \

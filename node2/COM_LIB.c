@@ -8,7 +8,15 @@
 #include "MCP_ADDRESSES.h"
 
 
-
+/****************************************************************************
+* \brief Receive and decode message from CAN
+*
+* \param out joystick position
+* \param out touchpad data
+* \param out game mode
+*
+* \return result of the CAN receive message operation
+****************************************************************************/
 uint8_t receive_and_decode_message(JoystickPosition* joystick_position, TouchpadData* touchpad_data, Mode* game_mode)
 {
   uint8_t tmp;
@@ -31,8 +39,16 @@ uint8_t receive_and_decode_message(JoystickPosition* joystick_position, Touchpad
   return tmp;
 }
 
-
-uint8_t receive_joistick_position(JoystickPosition* joystick_position, TouchpadData* touchpad_data, CANMessage message)
+/****************************************************************************
+* \brief Decode received message and fill in the structures for joystick 
+*		 position and touchpad data
+*
+* \param out joystick position
+* \param out touchpad data
+* \param in received CAN message
+*
+****************************************************************************/
+void receive_joistick_position(JoystickPosition* joystick_position, TouchpadData* touchpad_data, CANMessage message)
 {
   joystick_position->xaxis = message.data_array[0];
   joystick_position->yaxis = message.data_array[1];
@@ -45,7 +61,47 @@ uint8_t receive_joistick_position(JoystickPosition* joystick_position, TouchpadD
   
 }
 
-uint8_t receive_mode_change(Mode* CurrentMode, CANMessage message){
+/****************************************************************************
+* \brief Decode received message and fill in the structures for game mode
+*
+* \param out game mode
+* \param in received CAN message
+*
+****************************************************************************/
+void receive_mode_change(Mode* CurrentMode, CANMessage message)
+{
   CurrentMode->gamemode = message.data_array[0];
 }
 
+/***********************************************************************************
+* \brief Return the change in the right touch button
+*
+* \return True if the touch button has been pushed
+***********************************************************************************/
+uint8_t change_touchpad_data(uint8_t new_right_button_status)
+{
+  static uint8_t old_right_button_status;
+  uint8_t ret_val;
+  
+  ret_val = 0;
+    
+  if (old_right_button_status == 0 && new_right_button_status == 1)
+  {
+    ret_val = 1;
+  }
+  old_right_button_status = new_right_button_status;
+  
+  return ret_val;
+}
+
+
+uint8_t send_game_mode(GameModes mode)
+{
+	CANMessage message;
+	message.ID = 0x02;
+	message.length = 1;
+	
+	message.data_array[0]= (uint8_t) (mode);
+	
+	return CAN_send_message(message);
+}

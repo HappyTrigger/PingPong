@@ -6,6 +6,11 @@
 
 #define REFRESH_INTERVAL 20000
 
+/****************************************************************************
+* \brief Return the status af game
+*
+* \return true if something is blocking IR and game should freeze.
+****************************************************************************/
 uint8_t is_IR_interrupted()
 {
 	uint16_t sensorValue = 0;

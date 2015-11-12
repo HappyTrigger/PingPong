@@ -21,7 +21,6 @@ extern "C" void __cxa_pure_virtual() {;}
 
 //
 //
-void dac_write(int8_t value);
 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega\pins_arduino.h" 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\arduino.h"
@@ -30,8 +29,10 @@ void dac_write(int8_t value);
 #include <CAN_DRIVER.h>
 #include <COM_LIB.c>
 #include <COM_LIB.h>
-#include <CONTROL_DRIVER.c>
+#include <CONTROL_DRIVER.cpp>
 #include <CONTROL_DRIVER.h>
+#include <DAC_DRIVER.cpp>
+#include <DAC_DRIVER.h>
 #include <MCP_ADDRESSES.h>
 #include <MCP_DRIVER.c>
 #include <MCP_DRIVER.h>

@@ -12,6 +12,7 @@
 #include "OLED_DRIVER.h"
 #include "USART_DRIVER.h"
 #include "USER_INTERFACE.h"
+#include "EEPROM.h"
 
 
 
@@ -92,3 +93,41 @@ void SRAM_test(void)
 }
 
 
+high_score high_score_read()
+{
+	high_score scores;
+	uint8_t i, j;
+	// Read usernames
+	for (i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
+	{
+		for (j = 0; j < USERNAME_LENGTH; j++)
+		{
+			scores.username[i][j] = EEPROM_read(EEPROM_HIGH_SCORES_BASE_ADDR + i * USERNAME_LENGTH + j);
+		}
+	}
+	// Read high scores
+	for (i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
+	{
+		scores.score[i] = EEPROM_read(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + i);
+	}
+	
+	return scores;
+}
+
+void high_score_write(high_score scores)
+{
+	uint8_t i, j;
+	// Write usernames
+	for (i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
+	{
+		for (j = 0; j < USERNAME_LENGTH; j++)
+		{
+			EEPROM_write(EEPROM_HIGH_SCORES_BASE_ADDR + i * USERNAME_LENGTH + j, scores.username[i][j]);
+		}
+	}
+	// Write high scores
+	for (i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
+	{
+		EEPROM_write(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + i, scores.score[i]);
+	}
+}

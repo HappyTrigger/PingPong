@@ -11,7 +11,5 @@
 
 uint8_t is_IR_interrupted();
 
-
-
 #endif
 

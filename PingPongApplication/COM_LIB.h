@@ -10,25 +10,28 @@
 #define COM_LIB_H_
 #include <stdint.h>
 #include "JOYSTICK_DRIVER.h"
+#include "CAN_DRIVER.h"
 
 typedef enum
 {
-	Tutorial,
+	Tutorial=1,
 	Easy,
 	Normal,
 	Hard,
 	Insane,
-	Reverse_settings,
-	Normal_settings
+	Normal_settings,
+	Endgame
 } GameModes;
+
+typedef struct My_Game_Mode
+{
+	volatile uint8_t gamemode;
+}My_Game_Mode;
 
 uint8_t send_joystick_possition(JoystickPosition joystick_position, TouchpadData touchpad_data);
 
 uint8_t send_game_mode(GameModes mode);
-/*
-uint8_t send_touchpad_possition();
 
-uint8_t send_buttons_status();
-*/
+void receive_mode_change(My_Game_Mode* CurrentMode, CANMessage message);
 
 #endif /* COM_LIB_H_ */

@@ -11,7 +11,6 @@
 #include <avr/eeprom.h>
 #include <stdio.h>
 
-
 /****************************************************************************
 * \brief Initialize the user interface
 * 
@@ -20,24 +19,29 @@
 ****************************************************************************/
 void interface_init()
 {
+	high_score interface_high_scores;
 	volatile char *ext_ram = (char *) SRAM_USERNAME_ADDR;
-	volatile char *eeprom = (char *) EEPROM_HIGH_SCORES_BASE_ADDR;
-
-	for(int i = 0; i < SRAM_USERNAME_ADDR_LENGTH; i++)
+	volatile char *high_scores_sram = (char *) EEPROM_HIGH_SCORES_BASE_ADDR;
+	uint8_t i, j;
+	
+	for(i = 0; i < USERNAME_LENGTH; i++)
 	{
 		ext_ram[i] = 'A';
 	}
+	/*
+	interface_high_scores = high_score_read(EEPROM_HIGH_SCORES_BASE_ADDR);
 	
-	/*for(int j = 0; j < EEPROM_HIGH_SCORES_ADDR_LEN; j++)
+	for(i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
 	{
-		for (int k = 0; k < 5; k++)
+		for (j = 0; j < USERNAME_LENGTH; i++)
 		{
-			eeprom_busy_wait();
-			eeprom_write_byte(eeprom[k], (uint8_t) 'A'+k);
+			high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + j] = interface_high_scores.username[i][j];	
 		}
-		eeprom_busy_wait();
-		eeprom_write_dword(eeprom[j + 5],(uint32_t) 0);
-	}*/
+		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 5] = ' ';	
+		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 6] = (interface_high_scores.score[i] / 100) + 16;
+		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 7] = ((interface_high_scores.score[i] % 100) / 10) + 16;
+		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 8] = ((interface_high_scores.score[i] % 100) % 10) + 16;
+	}*/	
 }
 
 /****************************************************************************
@@ -45,10 +49,13 @@ void interface_init()
 *
 * \param in joystick calibration data
 ****************************************************************************/
-void interface_state_machine(JoystickPosition calibration)
+void interface_state_machine(JoystickPosition calibration, InterfaceState special_case)
 {
 	static InterfaceState state = State_Username;
 	
+	if(special_case == State_Endgame){
+		state = State_Endgame;
+	}
 	clear_oled();
 	
 	switch(state)
@@ -63,22 +70,27 @@ void interface_state_machine(JoystickPosition calibration)
 		
 		case State_Tutorial :
 		state = interface_tutorial(calibration);
+		send_game_mode(Tutorial);
 		break;
 		
 		case State_Easy :
 		state = interface_easy(calibration);
+		send_game_mode(Easy);
 		break;
 		
 		case State_Normal :
 		state = interface_normal(calibration);
+		send_game_mode(Normal);
 		break;
 		
 		case State_Hard :
 		state = interface_hard(calibration);
+		send_game_mode(Hard);
 		break;
 		
 		case State_Insane :
 		state = interface_insane(calibration);
+		send_game_mode(Insane);
 		break;
 		
 		case State_HighScores :
@@ -96,6 +108,16 @@ void interface_state_machine(JoystickPosition calibration)
 		case  State_Mode :
 		state = interface_mode(calibration);
 		break;
+		
+		case State_Playing:
+
+		break;
+		
+		case State_Endgame:
+		//Ending animation, probably return to highscore
+		//after some time
+		state = State_HighScores;
+		break;
 	}
 }
 
@@ -112,10 +134,10 @@ InterfaceState interface_username(JoystickPosition calibration)
 	JoystickDirection change_y, change_x;
 	ChangeTouchpadData change_touch_data;
 	TouchpadData touch_data;
-	char name[SRAM_USERNAME_ADDR_LENGTH];
+	char name[USERNAME_LENGTH];
 	char index = 0;
 	
-	for(int i=0; i<SRAM_USERNAME_ADDR_LENGTH;i++)
+	for(int i=0; i<USERNAME_LENGTH;i++)
 	{
 		name[i] = ext_ram[i];
 	}
@@ -176,7 +198,7 @@ InterfaceState interface_username(JoystickPosition calibration)
 		change_touch_data = change_touchpad_data(touch_data);
 		if (change_touch_data.rightButton)
 		{
-			for(int i=0; i<SRAM_USERNAME_ADDR_LENGTH;i++)
+			for(int i=0; i<USERNAME_LENGTH;i++)
 			{
 				ext_ram[i] = name[i];
 			}
@@ -291,7 +313,7 @@ InterfaceState interface_high_scores(JoystickPosition calibration)
 	JoystickDirection direction;
 	JoystickDirection change_x;
 	char scr_position = 0;
-	volatile char *eeprom = (char *) EEPROM_HIGH_SCORES_BASE_ADDR;
+	volatile char *high_scores = (char *) SRAM_HIGH_SCORES_ADDR;
 	
 	position = read_joystick_position(calibration);
 	direction = read_joystick_direction(position);
@@ -302,15 +324,13 @@ InterfaceState interface_high_scores(JoystickPosition calibration)
 	revert_colour_line(0);
 	
 	/*
-	for(int j = 0; j < EEPROM_HIGH_SCORES_ADDR_LEN; j)
+	for(int j = 0; j < HIGH_SCORES_TABLE_LENGTH; j + 9)
 	{
-		for (int k = 0; k < 5; k++)
+		set_position(1, (scr_position % 5));
+		for (int k = 0; k < 9; k++)
 		{
-			eeprom_busy_wait();
-			printf("%c", eeprom_read_byte(eeprom[j + k]));
+			print_char(high_scores[j + k]);
 		}
-		eeprom_busy_wait();
-		printf(": %d\n", eeprom_read_dword(eeprom[j + 5]));
 	}*/
 	
 	refresh_oled();
@@ -475,8 +495,8 @@ InterfaceState interface_mode(JoystickPosition calibration)
 					printf("Normal\n");
 					break;
 				case 1:
-					send_game_mode(Reverse_settings);
-					printf("Reverse\n");
+					//send_game_mode(Reverse_settings);
+					//printf("Reverse\n");
 					break;
 			}
 			return State_Options;
@@ -565,6 +585,8 @@ InterfaceState interface_tutorial(JoystickPosition calibration)
 	print_string("Tutorial");
 	revert_colour_line(0);
 	refresh_oled();
+	
+	/*
 	while(1)
 	{
 		touch_data = read_touchpad_data();
@@ -573,7 +595,8 @@ InterfaceState interface_tutorial(JoystickPosition calibration)
 		{
 			return State_NewGame;
 		}
-	}
+	}*/
+	return State_Playing;
 }
 
 /****************************************************************************
@@ -589,6 +612,8 @@ InterfaceState interface_easy(JoystickPosition calibration)
 	print_string("Easy");
 	revert_colour_line(0);
 	refresh_oled();
+	
+	/*
 	while(1)
 	{
 		touch_data = read_touchpad_data();
@@ -597,7 +622,8 @@ InterfaceState interface_easy(JoystickPosition calibration)
 		{
 			return State_NewGame;
 		}
-	}
+	}*/
+	return State_Playing;
 }
 
 /****************************************************************************
@@ -613,6 +639,7 @@ InterfaceState interface_normal(JoystickPosition calibration)
 	print_string("Normal");
 	revert_colour_line(0);
 	refresh_oled();
+	/*
 	while(1)
 	{
 		touch_data = read_touchpad_data();
@@ -621,7 +648,8 @@ InterfaceState interface_normal(JoystickPosition calibration)
 		{
 			return State_NewGame;
 		}
-	}
+	}*/
+	return State_Playing;
 }
 
 /****************************************************************************
@@ -637,6 +665,7 @@ InterfaceState interface_hard(JoystickPosition calibration)
 	print_string("Hard");
 	revert_colour_line(0);
 	refresh_oled();
+	/*
 	while(1)
 	{
 		touch_data = read_touchpad_data();
@@ -645,7 +674,8 @@ InterfaceState interface_hard(JoystickPosition calibration)
 		{
 			return State_NewGame;
 		}
-	}
+	}*/
+	return State_Playing;
 }
 
 /****************************************************************************
@@ -661,15 +691,15 @@ InterfaceState interface_insane(JoystickPosition calibration)
 	print_string("Insane");
 	revert_colour_line(0);
 	refresh_oled();
+	/*
 	while(1)
 	{
 		touch_data = read_touchpad_data();
 		change_touch_data = change_touchpad_data(touch_data);
 		if (change_touch_data.rightButton)
 		{
-			
-			
 			return State_NewGame;
 		}
-	}
+	}*/
+	return State_Playing;
 }

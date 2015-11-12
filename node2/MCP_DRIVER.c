@@ -31,7 +31,7 @@ void mcp_turn_off()
 /****************************************************************************
 * \brief Initialize communication with CAN controller
 *
-* \return SUCESS/FAILURE
+* \return SUCCESS/FAILURE
 ****************************************************************************/
 uint8_t mcp_init()
 {

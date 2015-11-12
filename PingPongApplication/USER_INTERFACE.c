@@ -61,63 +61,63 @@ void interface_state_machine(JoystickPosition calibration, InterfaceState specia
 	switch(state)
 	{
 		case State_Username :
-		state = interface_username(calibration);
-		break;
+			state = interface_username(calibration);
+			break;
 		
 		case State_NewGame :
-		state = interface_new_game(calibration);
-		break;
+			state = interface_new_game(calibration);
+			break;
 		
 		case State_Tutorial :
-		state = interface_tutorial(calibration);
-		send_game_mode(Tutorial);
-		break;
+			state = interface_tutorial(calibration);
+			send_game_mode(Tutorial);
+			break;
 		
 		case State_Easy :
-		state = interface_easy(calibration);
-		send_game_mode(Easy);
-		break;
+			state = interface_easy(calibration);
+			send_game_mode(Easy);
+			break;
 		
 		case State_Normal :
-		state = interface_normal(calibration);
-		send_game_mode(Normal);
-		break;
+			state = interface_normal(calibration);
+			send_game_mode(Normal);
+			break;
 		
 		case State_Hard :
-		state = interface_hard(calibration);
-		send_game_mode(Hard);
-		break;
+			state = interface_hard(calibration);
+			send_game_mode(Hard);
+			break;
 		
 		case State_Insane :
-		state = interface_insane(calibration);
-		send_game_mode(Insane);
-		break;
+			state = interface_insane(calibration);
+			send_game_mode(Insane);
+			break;
 		
 		case State_HighScores :
-		state = interface_high_scores(calibration);
-		break;
+			state = interface_high_scores(calibration);
+			break;
 		
 		case State_Options :
-		state = interface_options(calibration);
-		break;
+			state = interface_options(calibration);
+			break;
 		
 		case State_Sound :
-		state = interface_sound(calibration);
-		break;
+			state = interface_sound(calibration);
+			break;
 		
 		case  State_Mode :
-		state = interface_mode(calibration);
-		break;
+			state = interface_mode(calibration);
+			break;
 		
 		case State_Playing:
-
-		break;
+			
+			break;
 		
 		case State_Endgame:
 		//Ending animation, probably return to highscore
 		//after some time
-		state = State_HighScores;
-		break;
+			state = State_HighScores;
+			break;
 	}
 }
 

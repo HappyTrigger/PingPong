@@ -41,11 +41,11 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 {
 	JoystickDirection xAxes, yAxes, retVal;
 	
-	if (joystickPos.xaxis > 20)
+	if (joystickPos.xaxis > 220)
 	{
 		xAxes = Right;
 	}
-	else if (joystickPos.xaxis < -20)
+	else if (joystickPos.xaxis < 20)
 	{
 		xAxes = Left;
 	}
@@ -54,11 +54,11 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 		xAxes = Neutral;
 	}
 	
-	if (joystickPos.yaxis > 20)
+	if (joystickPos.yaxis > 220)
 	{
 		yAxes = Up;
 	}
-	else if (joystickPos.yaxis < -20)
+	else if (joystickPos.yaxis < 20)
 	{
 		yAxes = Down;
 	}
@@ -66,7 +66,7 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 		yAxes = Neutral; 
 	}
 	
-	if(abs(joystickPos.yaxis) > abs(joystickPos.xaxis))
+	if(abs(joystickPos.yaxis-145) > abs(joystickPos.xaxis-135))
 	{
 		retVal = yAxes;
 	}

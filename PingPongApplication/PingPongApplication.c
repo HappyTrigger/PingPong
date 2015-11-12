@@ -38,18 +38,20 @@ int main(void)
 	clear_bit(DDRD, PD2);
 	
 	init();
-	volatile char SPIdata = 0;
+//	volatile char SPIdata = 0;
 	TouchpadData data; 
 	int i = 0;
 	JoystickPosition position;
 	JoystickPosition calibration;
-	JoystickDirection direction;
-	JoystickDirection change_y, change_x;
-	ScreenName screen_name = 0;
+//	JoystickDirection direction;
+//	JoystickDirection change_y, change_x;
+//	ScreenName screen_name = 0;
 	calibration = joystick_calibration();
 	CANMessage canMessage, canMessageNode2;
 	My_Game_Mode game_mode;
 	high_score scores, score_read;
+	
+	
 	
 	//SRAM_test();
 	
@@ -95,7 +97,8 @@ int main(void)
 		send_joystick_possition(position, data);
 		_delay_ms(1);	
 
-		
+		printf("%d\n", position.xaxis);
+		printf("%d\n", position.yaxis);
 		
 		if(CAN_receive_message(&canMessageNode2)==SUCCESS)
 		{

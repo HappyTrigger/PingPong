@@ -191,7 +191,7 @@ int position_controller(uint8_t position_value)
     speed_controller(0, motor_direction);
     errorSum=0;
   }
-  int16_t dError = (error - lastError)/timeChange;
+  //int16_t dError = (error - lastError)/timeChange;
   errorSum += (error*timeChange);
 
   output = abs(kp*error + ki*errorSum); //kd*dError);

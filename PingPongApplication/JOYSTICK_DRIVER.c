@@ -19,7 +19,7 @@
 * \param in calibration data
 * \return Joystick position
 ****************************************************************************/
-JoystickPosition read_joystick_position(JoystickPosition calibration)
+JoystickPosition read_joystick_position()
 {
 	JoystickPosition position;
 

@@ -20,18 +20,13 @@ typedef enum
 	Hard,
 	Insane,
 	Normal_settings,
+	Reverse_settings,
 	Endgame
 } GameModes;
-
-typedef struct My_Game_Mode
-{
-	volatile uint8_t gamemode;
-}My_Game_Mode;
 
 uint8_t send_joystick_possition(JoystickPosition joystick_position, TouchpadData touchpad_data);
 
 uint8_t send_game_mode(GameModes mode);
 
-void receive_mode_change(My_Game_Mode* CurrentMode, CANMessage message);
 
 #endif /* COM_LIB_H_ */

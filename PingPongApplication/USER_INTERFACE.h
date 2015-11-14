@@ -7,6 +7,8 @@
 
 #include "OLED_DRIVER.h"
 #include "JOYSTICK_DRIVER.h"
+#include "COM_LIB.h"
+#include <util/delay.h>
 
 
 #ifndef USER_INTERFACE_H_
@@ -33,19 +35,19 @@ typedef enum
 
 
 void interface_init();
-void interface_state_machine(JoystickPosition calibration,InterfaceState special_case); 
-InterfaceState interface_username(JoystickPosition calibration);
-InterfaceState interface_new_game(JoystickPosition calibration);
-InterfaceState interface_high_scores(JoystickPosition calibration);
-InterfaceState interface_options(JoystickPosition calibration);
-InterfaceState interface_sound(JoystickPosition calibration);
-InterfaceState interface_mode(JoystickPosition calibration);
-InterfaceState interface_tutorial(JoystickPosition calibration);
-InterfaceState interface_easy(JoystickPosition calibration);
-InterfaceState interface_normal(JoystickPosition calibration);
-InterfaceState interface_hard(JoystickPosition calibration);
-InterfaceState interface_insane(JoystickPosition calibration);
-void interface_change_state(InterfaceState new_state);
+void interface_state_machine(); 
+InterfaceState interface_username();
+InterfaceState interface_new_game();
+InterfaceState interface_high_scores();
+InterfaceState interface_options();
+InterfaceState interface_sound();
+InterfaceState interface_mode();
+InterfaceState interface_tutorial();
+InterfaceState interface_print_mode(GameModes mode);
+//InterfaceState interface_normal();
+//InterfaceState interface_hard();
+//InterfaceState interface_insane();
+InterfaceState interface_playing();
 
 
 

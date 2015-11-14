@@ -8,6 +8,7 @@
 #include "USER_INTERFACE.h"
 #include "PING_PONG_LIB.h"
 #include "COM_LIB.h"
+#include "MCP_ADDRESSES.h"
 #include <avr/eeprom.h>
 #include <stdio.h>
 
@@ -47,70 +48,68 @@ void interface_init()
 /****************************************************************************
 * \brief The main function serving the game
 *
-* \param in joystick calibration data
+* \param in joystick  data
 ****************************************************************************/
-void interface_state_machine(JoystickPosition calibration, InterfaceState special_case)
-{
+void interface_state_machine()
+{	
 	static InterfaceState state = State_Username;
-	
-	if(special_case == State_Endgame){
-		state = State_Endgame;
-	}
+
 	clear_oled();
 	
 	switch(state)
 	{
 		case State_Username :
-			state = interface_username(calibration);
+			state = interface_username();
 			break;
 		
 		case State_NewGame :
-			state = interface_new_game(calibration);
+			state = interface_new_game();
 			break;
 		
 		case State_Tutorial :
-			state = interface_tutorial(calibration);
 			send_game_mode(Tutorial);
+			state = interface_tutorial();
 			break;
 		
 		case State_Easy :
-			state = interface_easy(calibration);
 			send_game_mode(Easy);
+			state = interface_print_mode(Easy);
 			break;
 		
 		case State_Normal :
-			state = interface_normal(calibration);
 			send_game_mode(Normal);
+			state = interface_print_mode(Normal);
 			break;
 		
 		case State_Hard :
-			state = interface_hard(calibration);
 			send_game_mode(Hard);
+			state = interface_print_mode(Hard);
 			break;
 		
 		case State_Insane :
-			state = interface_insane(calibration);
 			send_game_mode(Insane);
+			state = interface_print_mode(Insane);
 			break;
 		
 		case State_HighScores :
-			state = interface_high_scores(calibration);
+			state = interface_high_scores();
 			break;
 		
 		case State_Options :
-			state = interface_options(calibration);
+			state = interface_options();
 			break;
 		
 		case State_Sound :
-			state = interface_sound(calibration);
+			state = interface_sound();
 			break;
 		
 		case  State_Mode :
-			state = interface_mode(calibration);
+			state = interface_mode();
 			break;
 		
 		case State_Playing:
-			
+
+			state = interface_playing();
 			break;
 		
 		case State_Endgame:
@@ -124,9 +123,9 @@ void interface_state_machine(JoystickPosition calibration, InterfaceState specia
 /****************************************************************************
 * \brief Function call during the set username phase
 *
-* \param in joystick calibration data
+
 ****************************************************************************/
-InterfaceState interface_username(JoystickPosition calibration)
+InterfaceState interface_username()
 {
 	volatile char *ext_ram = (char *) SRAM_USERNAME_ADDR;
 	JoystickPosition position;
@@ -142,7 +141,7 @@ InterfaceState interface_username(JoystickPosition calibration)
 		name[i] = ext_ram[i];
 	}
 	
-	position = read_joystick_position(calibration);
+	position = read_joystick_position();
 	direction = read_joystick_direction(position);
 	change_y = change_yaxis(direction);
 	change_x = change_xaxis(direction);
@@ -155,7 +154,7 @@ InterfaceState interface_username(JoystickPosition calibration)
 	
 	while (1)
 	{
-		position = read_joystick_position(calibration);
+		position = read_joystick_position();
 		direction = read_joystick_direction(position);
 		change_y = change_yaxis(direction);
 		change_x = change_xaxis(direction);
@@ -178,7 +177,7 @@ InterfaceState interface_username(JoystickPosition calibration)
 			name[index] = (name[index] == 'A') ? 'Z' : (name[index] - 1);
 		}
 		
-		set_position(10,4);
+		set_position(10, 4);
 		for (int i = 0; i < 5; i++)
 		{
 			if (i == index)
@@ -211,9 +210,9 @@ InterfaceState interface_username(JoystickPosition calibration)
 /****************************************************************************
 * \brief Function call during the set new game phase
 *
-* \param in joystick calibration data
+
 ****************************************************************************/
-InterfaceState interface_new_game(JoystickPosition calibration)
+InterfaceState interface_new_game()
 {
 	JoystickPosition position;
 	JoystickDirection direction;
@@ -222,7 +221,7 @@ InterfaceState interface_new_game(JoystickPosition calibration)
 	TouchpadData touch_data;
 	char scr_position = 0;
 	
-	position = read_joystick_position(calibration);
+	position = read_joystick_position();
 	direction = read_joystick_direction(position);
 	change_y = change_yaxis(direction);
 	change_x = change_xaxis(direction);
@@ -243,7 +242,7 @@ InterfaceState interface_new_game(JoystickPosition calibration)
 	
 	while(1)
 	{
-		position = read_joystick_position(calibration);
+		position = read_joystick_position();
 		direction = read_joystick_direction(position);
 		change_y = change_yaxis(direction);
 		change_x = change_xaxis(direction);
@@ -305,9 +304,9 @@ InterfaceState interface_new_game(JoystickPosition calibration)
 *
 * TODO EEPROM reading the high scores
 *
-* \param in joystick calibration data
+
 ****************************************************************************/
-InterfaceState interface_high_scores(JoystickPosition calibration)
+InterfaceState interface_high_scores()
 {
 	JoystickPosition position;
 	JoystickDirection direction;
@@ -315,7 +314,7 @@ InterfaceState interface_high_scores(JoystickPosition calibration)
 	char scr_position = 0;
 	volatile char *high_scores = (char *) SRAM_HIGH_SCORES_ADDR;
 	
-	position = read_joystick_position(calibration);
+	position = read_joystick_position();
 	direction = read_joystick_direction(position);
 	change_x = change_xaxis(direction);
 	
@@ -337,7 +336,7 @@ InterfaceState interface_high_scores(JoystickPosition calibration)
 	
 	while(1)
 	{
-		position = read_joystick_position(calibration);
+		position = read_joystick_position();
 		direction = read_joystick_direction(position);
 		change_x = change_xaxis(direction);
 		
@@ -356,9 +355,9 @@ InterfaceState interface_high_scores(JoystickPosition calibration)
 /****************************************************************************
 * \brief Function call during the options phase
 *
-* \param in joystick calibration data
+
 ****************************************************************************/
-InterfaceState interface_options(JoystickPosition calibration)
+InterfaceState interface_options( )
 {
 	JoystickPosition position;
 	JoystickDirection direction;
@@ -367,7 +366,7 @@ InterfaceState interface_options(JoystickPosition calibration)
 	ChangeTouchpadData change_touch_data;
 	char scr_position = 0;
 	
-	position = read_joystick_position(calibration);
+	position = read_joystick_position();
 	direction = read_joystick_direction(position);
 	change_y = change_yaxis(direction);
 	change_x = change_xaxis(direction);
@@ -384,7 +383,7 @@ InterfaceState interface_options(JoystickPosition calibration)
 	
 	while(1)
 	{
-		position = read_joystick_position(calibration);
+		position = read_joystick_position();
 		direction = read_joystick_direction(position);
 		change_y = change_yaxis(direction);
 		change_x = change_xaxis(direction);
@@ -435,9 +434,9 @@ InterfaceState interface_options(JoystickPosition calibration)
 /****************************************************************************
 * \brief Function call during the set mode phase
 *
-* \param in joystick calibration data
+
 ****************************************************************************/
-InterfaceState interface_mode(JoystickPosition calibration)
+InterfaceState interface_mode()
 {
 	JoystickPosition position;
 	JoystickDirection direction;
@@ -446,7 +445,7 @@ InterfaceState interface_mode(JoystickPosition calibration)
 	ChangeTouchpadData change_touch_data;
 	char scr_position = 0;
 	
-	position = read_joystick_position(calibration);
+	position = read_joystick_position();
 	direction = read_joystick_direction(position);
 	change_y = change_yaxis(direction);
 
@@ -464,7 +463,7 @@ InterfaceState interface_mode(JoystickPosition calibration)
 	
 	while(1)
 	{
-		position = read_joystick_position(calibration);
+		position = read_joystick_position();
 		direction = read_joystick_direction(position);
 		change_y = change_yaxis(direction);
 		
@@ -508,9 +507,9 @@ InterfaceState interface_mode(JoystickPosition calibration)
 /****************************************************************************
 * \brief Function call during the set sound phase
 *
-* \param in joystick calibration data
+
 ****************************************************************************/
-InterfaceState interface_sound(JoystickPosition calibration)
+InterfaceState interface_sound()
 {
 	JoystickPosition position;
 	JoystickDirection direction;
@@ -519,7 +518,7 @@ InterfaceState interface_sound(JoystickPosition calibration)
 	ChangeTouchpadData change_touch_data;
 	char scr_position = 0;
 	
-	position = read_joystick_position(calibration);
+	position = read_joystick_position();
 	direction = read_joystick_direction(position);
 	change_y = change_yaxis(direction);
 
@@ -533,7 +532,7 @@ InterfaceState interface_sound(JoystickPosition calibration)
 	
 	while(1)
 	{
-		position = read_joystick_position(calibration);
+		position = read_joystick_position();
 		direction = read_joystick_direction(position);
 		change_y = change_yaxis(direction);
 		
@@ -575,131 +574,133 @@ InterfaceState interface_sound(JoystickPosition calibration)
 /****************************************************************************
 * \brief Function call during the set sound phase
 *
-* \param in joystick calibration data
 ****************************************************************************/
-InterfaceState interface_tutorial(JoystickPosition calibration)
+InterfaceState interface_tutorial()
 {
 	TouchpadData touch_data;
 	ChangeTouchpadData change_touch_data;
+	JoystickPosition position;
 	set_position(14,0);
 	print_string("Tutorial");
 	revert_colour_line(0);
+	set_position(0,6);
+	print_string("Press LEFT BUTTON to continue...");
 	refresh_oled();
 	
-	/*
-	while(1)
+	set_position(0,1);
+	print_string("To move servo move joystick");
+	refresh_oled();
+	while(! change_touch_data.leftButton)
+	{
+		position = read_joystick_position();
+		touch_data = read_touchpad_data();
+		touch_data.rightTouchPad = 127;
+		touch_data.rightButton = 0;
+		send_joystick_possition(position, touch_data);
+		change_touch_data = change_touchpad_data(touch_data);
+	}
+	change_touch_data.leftButton = 0;
+	
+	set_position(0,1);
+	print_string("To move motor touch RIGHT SLIDER");
+	refresh_oled();
+	
+	while(! change_touch_data.leftButton)
 	{
 		touch_data = read_touchpad_data();
+		touch_data.rightButton = 0;
+		send_joystick_possition(position, touch_data);
 		change_touch_data = change_touchpad_data(touch_data);
-		if (change_touch_data.rightButton)
-		{
-			return State_NewGame;
-		}
-	}*/
-	return State_Playing;
+	}
+	change_touch_data.leftButton = 0;
+	
+	set_position(0,1);
+	print_string("  To shoot touch RIGHT BUTTON   ");
+	refresh_oled();
+	
+	while(! change_touch_data.leftButton)
+	{
+		touch_data = read_touchpad_data();
+		touch_data.rightTouchPad = 127;
+		send_joystick_possition(position, touch_data);
+		change_touch_data = change_touchpad_data(touch_data);
+	}
+	change_touch_data.leftButton = 0;
+	
+	set_position(0,1);
+	print_string("    Try everything together     ");
+	refresh_oled();
+	
+	while(! change_touch_data.leftButton)
+	{
+		touch_data = read_touchpad_data();
+		position = read_joystick_position();
+		send_joystick_possition(position, touch_data);
+		change_touch_data = change_touchpad_data(touch_data);
+	}
+	change_touch_data.leftButton = 0;
+	change_touch_data.rightButton = 0;
+	
+	return State_NewGame;
 }
 
+
 /****************************************************************************
-* \brief Function call during the easy mode gameplay
+* \brief Print out game mode on OLED
 *
-* \param in joystick calibration data
+* \param in game mode
 ****************************************************************************/
-InterfaceState interface_easy(JoystickPosition calibration)
+InterfaceState interface_print_mode(GameModes mode)
 {
-	TouchpadData touch_data;
-	ChangeTouchpadData change_touch_data;
-	set_position(14,0);
-	print_string("Easy");
+	switch (mode)
+	{
+		case Easy :
+			set_position(14,0);
+			print_string("Easy");
+			break;
+			
+		case Normal :
+			set_position(12,0);
+			print_string("Normal");
+			break;
+			
+		case Hard :
+			set_position(12,0);
+			print_string("Hard");
+			break;
+						
+		case Insane :
+			set_position(12,0);
+			print_string("Insane");
+			break;
+	}
 	revert_colour_line(0);
 	refresh_oled();
 	
-	/*
-	while(1)
-	{
-		touch_data = read_touchpad_data();
-		change_touch_data = change_touchpad_data(touch_data);
-		if (change_touch_data.rightButton)
-		{
-			return State_NewGame;
-		}
-	}*/
 	return State_Playing;
+	
 }
 
-/****************************************************************************
-* \brief Function call during the normal mode gameplay
-*
-* \param in joystick calibration data
-****************************************************************************/
-InterfaceState interface_normal(JoystickPosition calibration)
+InterfaceState interface_playing()
 {
-	TouchpadData touch_data;
-	ChangeTouchpadData change_touch_data;
-	set_position(12,0);
-	print_string("Normal");
-	revert_colour_line(0);
-	refresh_oled();
-	/*
-	while(1)
+	CANMessage canMessageNode2;
+	TouchpadData data;
+	JoystickPosition position;
+	
+	do
 	{
-		touch_data = read_touchpad_data();
-		change_touch_data = change_touchpad_data(touch_data);
-		if (change_touch_data.rightButton)
+		position = read_joystick_position();
+		data = read_touchpad_data();
+		
+		send_joystick_possition(position, data);
+		_delay_ms(1);
+		
+		if(CAN_receive_message(&canMessageNode2) != SUCCESS)
 		{
-			return State_NewGame;
+			canMessageNode2.ID = 0xFF;	
 		}
-	}*/
-	return State_Playing;
-}
-
-/****************************************************************************
-* \brief Function call during the hard mode gameplay
-*
-* \param in joystick calibration data
-****************************************************************************/
-InterfaceState interface_hard(JoystickPosition calibration)
-{
-	TouchpadData touch_data;
-	ChangeTouchpadData change_touch_data;
-	set_position(12,0);
-	print_string("Hard");
-	revert_colour_line(0);
-	refresh_oled();
-	/*
-	while(1)
-	{
-		touch_data = read_touchpad_data();
-		change_touch_data = change_touchpad_data(touch_data);
-		if (change_touch_data.rightButton)
-		{
-			return State_NewGame;
-		}
-	}*/
-	return State_Playing;
-}
-
-/****************************************************************************
-* \brief Function call during the insane mode gameplay
-*
-* \param in joystick calibration data
-****************************************************************************/
-InterfaceState interface_insane(JoystickPosition calibration)
-{
-	TouchpadData touch_data;
-	ChangeTouchpadData change_touch_data;
-	set_position(12,0);
-	print_string("Insane");
-	revert_colour_line(0);
-	refresh_oled();
-	/*
-	while(1)
-	{
-		touch_data = read_touchpad_data();
-		change_touch_data = change_touchpad_data(touch_data);
-		if (change_touch_data.rightButton)
-		{
-			return State_NewGame;
-		}
-	}*/
-	return State_Playing;
+		
+	} while(canMessageNode2.ID != 0x05);
+	
+	return State_Endgame; 
 }

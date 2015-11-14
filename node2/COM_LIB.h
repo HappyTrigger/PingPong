@@ -47,6 +47,6 @@ void receive_joistick_position(JoystickPosition* joystick_position, TouchpadData
 void receive_mode_change(Mode* CurrentMode, CANMessage message);
 
 uint8_t change_touchpad_data(uint8_t new_right_button_status);
-uint8_t send_game_mode(GameModes mode);
+uint8_t end_game();
 
 #endif /* COM_LIB_H_ */

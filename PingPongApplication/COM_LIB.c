@@ -50,7 +50,3 @@ uint8_t send_game_mode(GameModes mode)
 }
 
 
-void receive_mode_change(My_Game_Mode* CurrentMode, CANMessage message)
-{
-	CurrentMode->gamemode = message.data_array[0];
-}

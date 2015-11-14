@@ -4,6 +4,7 @@
 #define _CONTROL_DRIVER_h
 
 #include "arduino.h"
+#include "COM_LIB.h"
 
 #define MJ1_OE A7
 #define MJ1_RST A6
@@ -34,6 +35,8 @@ int16_t return_max();
 int16_t read_encoder();
 
 int position_controller(uint8_t position_value);
+
+void joystick_position_controller(JoystickPosition* joystick_position);
 
 
 #endif

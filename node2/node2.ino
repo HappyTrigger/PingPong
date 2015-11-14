@@ -1,13 +1,12 @@
 #include "DAC_DRIVER.h"
 #include "CONTROL_DRIVER.h"
+#include "COM_LIB.h"
 
-extern "C" {
 #include "MCP_DRIVER.h"
 #include "MCP_ADDRESSES.h"
 #include "SPI_DRIVER.h"
-#include "COM_LIB.h"
 #include "SERVO_DRIVER.h"
-}
+
 
 #include <Servo.h>
 #include <Wire.h>
@@ -74,11 +73,15 @@ void loop()
    //Serial.println(change_touchpad_data(t_data.rightButton));
    
    
+   
+	//easyMode
+		
+   
    //Shooting_mech
    if(change_touchpad_data(t_data.rightButton) == 1)
    {
       digitalWrite(SHOOTING_PIN, LOW);
-      delay(90);
+      delay(50);
       digitalWrite(SHOOTING_PIN, HIGH);
    }
     //MotorSpeed
@@ -86,12 +89,13 @@ void loop()
     //temp = speed_controller(temp);
     //Serial.println(temp);
   }  
- 
+
   
   //Position-controller
+  Serial.println(g_mode.gamemode);  
   temp = position_controller(t_data.rightTouchPad);
 
-
+/*
   if(is_IR_interrupted()){
     //Something is blocking the IR
     //Do nothing if not playing the game
@@ -100,12 +104,14 @@ void loop()
         g_mode.gamemode = Endgame;
     }
   }
+*/
 
   switch(g_mode.gamemode){
     case Tutorial:
 		Serial.println(1);
 		break;
     case Easy:
+	//	joystick_position_controller(&j_position);
 		Serial.println(2);
 		break;
     case Normal:
@@ -121,8 +127,9 @@ void loop()
 		Serial.println(6);
 		break;
     case Endgame:
-		send_game_mode(Endgame);
+		end_game();
 		Serial.println(7);
+		g_mode.gamemode=0;
 		break;
     default:
 		Serial.println(8);

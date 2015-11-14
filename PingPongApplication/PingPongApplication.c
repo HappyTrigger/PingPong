@@ -38,21 +38,18 @@ int main(void)
 	clear_bit(DDRD, PD2);
 	
 	init();
-//	volatile char SPIdata = 0;
 	TouchpadData data; 
 	int i = 0;
 	JoystickPosition position;
-	JoystickPosition calibration;
 //	JoystickDirection direction;
 //	JoystickDirection change_y, change_x;
 //	ScreenName screen_name = 0;
-	calibration = joystick_calibration();
-	CANMessage canMessage, canMessageNode2;
-	My_Game_Mode game_mode;
+	CANMessage canMessage;
 	high_score scores, score_read;
 	
 	
-	
+
+	//led_toggle();
 	//SRAM_test();
 	
 	CAN_init();
@@ -89,28 +86,8 @@ int main(void)
 	//sei();
 	while(1)
 	{
-		interface_state_machine(calibration, State_NewGame);
+		interface_state_machine();
 	
-		position = read_joystick_position(calibration);
-		data = read_touchpad_data();
-		
-		send_joystick_possition(position, data);
-		_delay_ms(1);	
-
-		printf("%d\n", position.xaxis);
-		printf("%d\n", position.yaxis);
-		
-		if(CAN_receive_message(&canMessageNode2)==SUCCESS)
-		{
-			printf("#%d. %s : %d\n", 1, 2, 3);
-			receive_mode_change(&game_mode, canMessageNode2);
-			if(game_mode.gamemode == Endgame)
-			{
-				interface_state_machine(calibration, State_Endgame);
-			}
-		}
-		
-		
 		
 		//score_read = high_score_read();
 		
@@ -121,8 +98,6 @@ int main(void)
 			//printf("#%d. %s : %d\n", i, score_read.username[i], score_read.score[i]);
 		//}
 		
-		//SRAM_test();
-		//led_toggle();
 	}
 }
 

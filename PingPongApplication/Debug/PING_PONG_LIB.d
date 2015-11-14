@@ -17,7 +17,8 @@ PING_PONG_LIB.d PING_PONG_LIB.o: .././PING_PONG_LIB.c \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\math.h \
  .././PING_PONG_LIB.h .././OLED_DRIVER.h .././JOYSTICK_DRIVER.h \
- .././USART_DRIVER.h .././USER_INTERFACE.h .././EEPROM.h
+ .././USART_DRIVER.h .././USER_INTERFACE.h .././COM_LIB.h \
+ .././CAN_DRIVER.h .././EEPROM.h
 
 c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -62,5 +63,9 @@ c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-g
 .././USART_DRIVER.h:
 
 .././USER_INTERFACE.h:
+
+.././COM_LIB.h:
+
+.././CAN_DRIVER.h:
 
 .././EEPROM.h:

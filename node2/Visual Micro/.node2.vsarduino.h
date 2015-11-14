@@ -9,7 +9,6 @@
 */
 
 #define __AVR_ATmega2560__
-#define _VMDEBUG 1
 #define ARDUINO 165
 #define ARDUINO_MAIN
 #define F_CPU 16000000L
@@ -26,18 +25,18 @@ extern "C" void __cxa_pure_virtual() {;}
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega\pins_arduino.h" 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\arduino.h"
 #include <node2.ino>
-#include <CAN_DRIVER.c>
+#include <CAN_DRIVER.cpp>
 #include <CAN_DRIVER.h>
-#include <COM_LIB.c>
+#include <COM_LIB.cpp>
 #include <COM_LIB.h>
 #include <CONTROL_DRIVER.cpp>
 #include <CONTROL_DRIVER.h>
 #include <DAC_DRIVER.cpp>
 #include <DAC_DRIVER.h>
 #include <MCP_ADDRESSES.h>
-#include <MCP_DRIVER.c>
+#include <MCP_DRIVER.cpp>
 #include <MCP_DRIVER.h>
-#include <SERVO_DRIVER.c>
+#include <SERVO_DRIVER.cpp>
 #include <SERVO_DRIVER.h>
-#include <SPI_DRIVER.c>
+#include <SPI_DRIVER.cpp>
 #include <SPI_DRIVER.h>

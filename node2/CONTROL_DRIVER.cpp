@@ -14,14 +14,14 @@
 ****************************************************************************/
 int16_t ENCODER_MAX_VALUE = 0;
 int16_t ENCODER_MIN_VALUE = 0;
-uint8_t MAX_SPEED = 125;
+uint8_t MAX_SPEED = 100;
 
 /****************************************************************************
 * \brief Variables used in the PID Controller
 *
 ****************************************************************************/
-float kp = 1.4;
-float ki = 1;
+float kp = 1.2;
+float ki = 0.9;
 float kd = 0.1;
 
 double timeChange = 0.01;
@@ -204,6 +204,26 @@ int position_controller(uint8_t position_value)
 
   speed_controller(output, motor_direction);
   return output;
+}
+
+
+void joystick_position_controller(JoystickPosition* joystick_position)
+{
+	uint8_t temp = joystick_position->yaxis;
+	uint8_t dir;
+	temp = temp - 137; // A little calibration
+	
+	if (temp < 0 )
+	{
+		dir = LEFT_DIRECTION;
+	}
+	else if(temp > 0)
+	{//move to the right
+		dir = RIGHT_DIRECTION;
+	}
+	
+	temp = abs(temp); 
+	speed_controller(temp, dir);
 }
 
 

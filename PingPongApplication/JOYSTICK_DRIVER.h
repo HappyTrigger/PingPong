@@ -39,13 +39,13 @@ typedef struct TouchpadData
 
 typedef struct ChangeTouchpadData
 {
-	char rightButton;
-	char leftButton;
+	uint8_t rightButton;
+	uint8_t leftButton;
 } ChangeTouchpadData;
 
 
-typedef enum 
-{	
+typedef enum
+{
 	Left,
 	Right,
 	Up,

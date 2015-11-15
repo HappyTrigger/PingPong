@@ -47,6 +47,7 @@ C_SRCS +=  \
 ../PING_PONG_LIB.c \
 ../PingPongApplication.c \
 ../SPI_DRIVER.c \
+../TIME_DRIVER.c \
 ../USART_DRIVER.c \
 ../USER_INTERFACE.c
 
@@ -68,6 +69,7 @@ OLED_DRIVER.o \
 PING_PONG_LIB.o \
 PingPongApplication.o \
 SPI_DRIVER.o \
+TIME_DRIVER.o \
 USART_DRIVER.o \
 USER_INTERFACE.o
 
@@ -82,6 +84,7 @@ OLED_DRIVER.o \
 PING_PONG_LIB.o \
 PingPongApplication.o \
 SPI_DRIVER.o \
+TIME_DRIVER.o \
 USART_DRIVER.o \
 USER_INTERFACE.o
 
@@ -96,6 +99,7 @@ OLED_DRIVER.d \
 PING_PONG_LIB.d \
 PingPongApplication.d \
 SPI_DRIVER.d \
+TIME_DRIVER.d \
 USART_DRIVER.d \
 USER_INTERFACE.d
 
@@ -110,6 +114,7 @@ OLED_DRIVER.d \
 PING_PONG_LIB.d \
 PingPongApplication.d \
 SPI_DRIVER.d \
+TIME_DRIVER.d \
 USART_DRIVER.d \
 USER_INTERFACE.d
 
@@ -127,6 +132,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

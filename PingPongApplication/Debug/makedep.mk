@@ -22,6 +22,8 @@ PingPongApplication.c
 
 SPI_DRIVER.c
 
+TIME_DRIVER.c
+
 USART_DRIVER.c
 
 USER_INTERFACE.c

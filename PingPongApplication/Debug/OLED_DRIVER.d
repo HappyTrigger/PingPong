@@ -18,7 +18,7 @@ OLED_DRIVER.d OLED_DRIVER.o: .././OLED_DRIVER.c \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\lock.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\string.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\stdlib.h \
- .././OLED_DRIVER.h .././JOYSTICK_DRIVER.h .././PING_PONG_LIB.h
+ .././OLED_DRIVER.h .././PING_PONG_LIB.h .././JOYSTICK_DRIVER.h
 
 c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\delay.h:
 
@@ -60,6 +60,6 @@ c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-g
 
 .././OLED_DRIVER.h:
 
-.././JOYSTICK_DRIVER.h:
-
 .././PING_PONG_LIB.h:
+
+.././JOYSTICK_DRIVER.h:

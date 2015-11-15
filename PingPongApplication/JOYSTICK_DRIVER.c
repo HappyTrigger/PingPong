@@ -23,10 +23,10 @@ JoystickPosition read_joystick_position()
 {
 	JoystickPosition position;
 
-	position.xaxis = read_adc(ADC_CH2);
+	position.xaxis = ADC_read(ADC_CH2);
 	//position.xaxis = ((((position.xaxis - calibration.xaxis)*100)/255)-50)*2;
 
-	position.yaxis = read_adc(ADC_CH1);
+	position.yaxis = ADC_read(ADC_CH1);
 	//position.yaxis = ((((position.yaxis - calibration.yaxis)*100)/255)-50)*2;
 	
 	return position;
@@ -63,7 +63,7 @@ JoystickDirection read_joystick_direction(JoystickPosition joystickPos)
 		yAxes = Down;
 	}
 	else{
-		yAxes = Neutral; 
+		yAxes = Neutral;
 	}
 	
 	if(abs(joystickPos.yaxis-145) > abs(joystickPos.xaxis-135))
@@ -88,12 +88,12 @@ JoystickPosition joystick_calibration()
 {
 	
 	JoystickPosition position;
-	position.xaxis = read_adc(ADC_CH2);
-	position.yaxis = read_adc(ADC_CH1);
+	position.xaxis = ADC_read(ADC_CH2);
+	position.yaxis = ADC_read(ADC_CH1);
 	position.xaxis -= 127;
 	position.yaxis -= 127;
 
-	return position;	
+	return position;
 }
 
 /****************************************************************************
@@ -104,8 +104,8 @@ JoystickPosition joystick_calibration()
 TouchpadData read_touchpad_data()
 {
 	TouchpadData touchpad;
-	touchpad.rightTouchPad = read_adc(ADC_CH3);
-	touchpad.leftTouchPad = read_adc(ADC_CH4);
+	touchpad.rightTouchPad = ADC_read(ADC_CH3);
+	touchpad.leftTouchPad = ADC_read(ADC_CH4);
 	
 	if(test_bit(BUTTON_PORT, LEFT_BUTTON_PIN))
 	{
@@ -121,7 +121,7 @@ TouchpadData read_touchpad_data()
 	}
 	else
 	{
-		touchpad.rightButton = 0;	
+		touchpad.rightButton = 0;
 	}
 	return touchpad;
 }
@@ -140,13 +140,13 @@ JoystickDirection change_xaxis(JoystickDirection direction)
 		old_x_direction = Neutral;
 		return Neutral;
 	}
-		
+	
 	if (old_x_direction != direction)
 	{
 		old_x_direction = direction;
 		return direction;
 	}
-		
+	
 	old_x_direction = direction;
 	return Neutral;
 }
@@ -156,7 +156,8 @@ JoystickDirection change_xaxis(JoystickDirection direction)
 *
 * \return Direction of joystick
 ***********************************************************************************/
-JoystickDirection change_yaxis(JoystickDirection direction){
+JoystickDirection change_yaxis(JoystickDirection direction)
+{
 	static JoystickDirection old_y_direction = Neutral;
 	
 	if(direction!= Up && direction != Down)
@@ -164,7 +165,7 @@ JoystickDirection change_yaxis(JoystickDirection direction){
 		old_y_direction = Neutral;
 		return Neutral;
 	}
-		
+	
 	if (old_y_direction != direction)
 	{
 		old_y_direction = direction;

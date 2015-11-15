@@ -5,7 +5,7 @@
 #include "MCP_DRIVER.h"
 #include "MCP_ADDRESSES.h"
 #include "SPI_DRIVER.h"
-#include "SERVO_DRIVER.h"
+#include "IR_DRIVER.h"
 
 
 #include <Servo.h>
@@ -20,10 +20,12 @@ JoystickPosition j_position;
 TouchpadData t_data;
 Mode g_mode;
 Servo myservo;
+Control_settings g_setting;
+
+
+
 uint16_t temp;
 int16_t temp_bit;
-
-
 
 
 
@@ -55,84 +57,103 @@ void setup()
   pinMode(SHOOTING_PIN, OUTPUT);
   digitalWrite(SHOOTING_PIN, HIGH);
 
+  //GameMode init
+  g_mode.gamemode = No_mode;
+  g_setting = NORMAL_SETTINGS;
+  
+  
 
-  g_mode.gamemode = 0;
-  
-  
+
 }
 
 void loop()
 {
+	int i;
 
   if( SUCCESS == receive_and_decode_message(&j_position, &t_data, &g_mode))
   {
-
    //ServoController
-    myservo.write(map(j_position.xaxis, 0, 255, 180, 0));
-    //Serial.println(temp);
-   //Serial.println(change_touchpad_data(t_data.rightButton));
+   //Serial.println(j_position.xaxis);
+   //servo_value_mapping(j_position.xaxis, g_setting);
    
+
    
-   
-	//easyMode
-		
-   
+   if(g_setting == NORMAL_SETTINGS){
+	   myservo.write(map(j_position.xaxis, 0, 255, 180, 0));
+   }
+   else if(g_setting == REVERSE_SETTINGS){
+	   myservo.write(map(j_position.xaxis, 0, 255, 0, 180));
+   }
+	
    //Shooting_mech
+   /*
    if(change_touchpad_data(t_data.rightButton) == 1)
    {
       digitalWrite(SHOOTING_PIN, LOW);
       delay(50);
       digitalWrite(SHOOTING_PIN, HIGH);
-   }
-    //MotorSpeed
-    //temp = map(j_position.xaxis, 0, 255, -100, 100);
-    //temp = speed_controller(temp);
-    //Serial.println(temp);
+   }*/
+   
   }  
-
-  
-  //Position-controller
-  Serial.println(g_mode.gamemode);  
-  temp = position_controller(t_data.rightTouchPad);
 
 /*
   if(is_IR_interrupted()){
     //Something is blocking the IR
     //Do nothing if not playing the game
-    if(g_mode.gamemode >= 1 && g_mode.gamemode <= 5 ){
+    if(g_mode.gamemode >= 1 && g_mode.gamemode <= 5 && g_mode.gamemode == Reverse_settings || g_mode.gamemode == Normal_settings ){
       //Gamelost 
         g_mode.gamemode = Endgame;
     }
+  }*/
+
+  if(change_touchpad_data(t_data.leftButton) == 1){
+	  g_mode.gamemode = Endgame;
   }
-*/
+
 
   switch(g_mode.gamemode){
-    case Tutorial:
-		Serial.println(1);
+    case No_mode:
 		break;
+	
+	case Tutorial:
+		temp = position_controller(t_data.rightTouchPad);
+		break;
+		
     case Easy:
-	//	joystick_position_controller(&j_position);
-		Serial.println(2);
+		temp_bit=joystick_position_controller(&j_position);
+		
 		break;
+		
     case Normal:
-		Serial.println(3);
+		temp = position_controller(t_data.rightTouchPad);
 		break;
+		
     case Hard:
-		Serial.println(4);
+		temp = position_controller(t_data.rightTouchPad);
 		break;
+		
     case Insane:
-		Serial.println(5);
+		temp = position_controller(t_data.rightTouchPad);	
+		change_pi_param(1.3, 2.5);
 		break;
-    case Normal_settings:
-		Serial.println(6);
+		
+    case Settings_normal:
+		g_setting = NORMAL_SETTINGS;
+		change_pi_param(1.7, 0.9);
 		break;
+		
+    case Settings_reverse:
+		g_setting = REVERSE_SETTINGS;
+		break;
+		
     case Endgame:
 		end_game();
-		Serial.println(7);
 		g_mode.gamemode=0;
+		g_setting = NORMAL_SETTINGS;
 		break;
+		
     default:
-		Serial.println(8);
+		//Serial.println(9);
 		break;
   }
   

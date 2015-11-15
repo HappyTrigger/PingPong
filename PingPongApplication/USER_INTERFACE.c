@@ -12,113 +12,98 @@
 #include <avr/eeprom.h>
 #include <stdio.h>
 
+static uint16_t current_score;
+static GameModes current_mode;
+
 /****************************************************************************
 * \brief Initialize the user interface
-* 
-* TODO EEPROM highscores
 *
 ****************************************************************************/
 void interface_init()
 {
-	high_score interface_high_scores;
 	volatile char *ext_ram = (char *) SRAM_USERNAME_ADDR;
-	volatile char *high_scores_sram = (char *) EEPROM_HIGH_SCORES_BASE_ADDR;
-	uint8_t i, j;
+	uint8_t i;
 	
 	for(i = 0; i < USERNAME_LENGTH; i++)
 	{
 		ext_ram[i] = 'A';
 	}
-	/*
-	interface_high_scores = high_score_read(EEPROM_HIGH_SCORES_BASE_ADDR);
 	
-	for(i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
-	{
-		for (j = 0; j < USERNAME_LENGTH; i++)
-		{
-			high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + j] = interface_high_scores.username[i][j];	
-		}
-		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 5] = ' ';	
-		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 6] = (interface_high_scores.score[i] / 100) + 16;
-		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 7] = ((interface_high_scores.score[i] % 100) / 10) + 16;
-		high_scores_sram[SRAM_HIGH_SCORES_ADDR + i * 9 + 8] = ((interface_high_scores.score[i] % 100) % 10) + 16;
-	}*/	
+	SRAM_high_score_write();
+	
 }
+
 
 /****************************************************************************
 * \brief The main function serving the game
 *
-* \param in joystick  data
+
 ****************************************************************************/
 void interface_state_machine()
-{	
+{
 	static InterfaceState state = State_Username;
-
-	clear_oled();
 	
 	switch(state)
 	{
 		case State_Username :
-			state = interface_username();
-			break;
+		state = interface_username();
+		break;
 		
 		case State_NewGame :
-			state = interface_new_game();
-			break;
+		state = interface_new_game();
+		break;
 		
 		case State_Tutorial :
-			send_game_mode(Tutorial);
-			state = interface_tutorial();
-			break;
+		send_game_mode(Tutorial);
+		state = interface_tutorial();
+		break;
 		
 		case State_Easy :
-			send_game_mode(Easy);
-			state = interface_print_mode(Easy);
-			break;
+		send_game_mode(Easy);
+		state = interface_print_mode(Easy);
+		break;
 		
 		case State_Normal :
-			send_game_mode(Normal);
-			state = interface_print_mode(Normal);
-			break;
+		send_game_mode(Normal);
+		state = interface_print_mode(Normal);
+		break;
 		
 		case State_Hard :
-			send_game_mode(Hard);
-			state = interface_print_mode(Hard);
-			break;
+		send_game_mode(Hard);
+		state = interface_print_mode(Hard);
+		break;
 		
 		case State_Insane :
-			send_game_mode(Insane);
-			state = interface_print_mode(Insane);
-			break;
+		send_game_mode(Insane);
+		state = interface_print_mode(Insane);
+		break;
 		
 		case State_HighScores :
-			state = interface_high_scores();
-			break;
+		state = interface_high_scores();
+		break;
 		
 		case State_Options :
-			state = interface_options();
-			break;
+		state = interface_options();
+		break;
 		
 		case State_Sound :
-			state = interface_sound();
-			break;
+		state = interface_sound();
+		break;
 		
 		case  State_Mode :
-			state = interface_mode();
-			break;
+		state = interface_mode();
+		break;
 		
 		case State_Playing:
-
-			state = interface_playing();
-			break;
+		state = interface_playing();
+		break;
 		
 		case State_Endgame:
-		//Ending animation, probably return to highscore
-		//after some time
-			state = State_HighScores;
-			break;
+		state = inteface_end_game();
+		break;
 	}
 }
+
 
 /****************************************************************************
 * \brief Function call during the set username phase
@@ -134,9 +119,12 @@ InterfaceState interface_username()
 	ChangeTouchpadData change_touch_data;
 	TouchpadData touch_data;
 	char name[USERNAME_LENGTH];
-	char index = 0;
+	uint8_t index = 0;
+	uint8_t i;
 	
-	for(int i=0; i<USERNAME_LENGTH;i++)
+	clear_oled();
+	
+	for(i=0; i<USERNAME_LENGTH;i++)
 	{
 		name[i] = ext_ram[i];
 	}
@@ -178,7 +166,7 @@ InterfaceState interface_username()
 		}
 		
 		set_position(10, 4);
-		for (int i = 0; i < 5; i++)
+		for (i = 0; i < USERNAME_LENGTH; i++)
 		{
 			if (i == index)
 			{
@@ -197,15 +185,16 @@ InterfaceState interface_username()
 		change_touch_data = change_touchpad_data(touch_data);
 		if (change_touch_data.rightButton)
 		{
-			for(int i=0; i<USERNAME_LENGTH;i++)
+			for(i = 0; i < USERNAME_LENGTH; i++)
 			{
 				ext_ram[i] = name[i];
 			}
 			
 			return State_NewGame;
 		}
-	}	
+	}
 }
+
 
 /****************************************************************************
 * \brief Function call during the set new game phase
@@ -219,7 +208,9 @@ InterfaceState interface_new_game()
 	JoystickDirection change_y, change_x;
 	ChangeTouchpadData change_touch_data;
 	TouchpadData touch_data;
-	char scr_position = 0;
+	uint8_t scr_position = 0;
+	
+	clear_oled();
 	
 	position = read_joystick_position();
 	direction = read_joystick_direction(position);
@@ -279,40 +270,40 @@ InterfaceState interface_new_game()
 			switch(scr_position)
 			{
 				case 0:
-					send_game_mode(Tutorial);
-					return State_Tutorial;
+				send_game_mode(Tutorial);
+				return State_Tutorial;
 				case 1:
-					send_game_mode(Easy);
-					return State_Easy;
+				send_game_mode(Easy);
+				return State_Easy;
 				case 2:
-					send_game_mode(Normal);
-					return State_Normal;
+				send_game_mode(Normal);
+				return State_Normal;
 				case 3:
-					send_game_mode(Hard);
-					return State_Hard;
+				send_game_mode(Hard);
+				return State_Hard;
 				case 4:
-					send_game_mode(Insane);
-					return State_Insane;
+				send_game_mode(Insane);
+				return State_Insane;
 			}
 		}
 		refresh_oled();
 	}
 }
 
+
 /****************************************************************************
 * \brief Function call during the set show high scores phase
 *
-* TODO EEPROM reading the high scores
-*
-
 ****************************************************************************/
 InterfaceState interface_high_scores()
 {
 	JoystickPosition position;
 	JoystickDirection direction;
 	JoystickDirection change_x;
-	char scr_position = 0;
-	volatile char *high_scores = (char *) SRAM_HIGH_SCORES_ADDR;
+	uint8_t i, j;
+	volatile char* high_scores_sram = (char*) SRAM_HIGH_SCORES_ADDR;
+	
+	clear_oled();
 	
 	position = read_joystick_position();
 	direction = read_joystick_direction(position);
@@ -322,15 +313,14 @@ InterfaceState interface_high_scores()
 	print_string("High Scores");
 	revert_colour_line(0);
 	
-	/*
-	for(int j = 0; j < HIGH_SCORES_TABLE_LENGTH; j + 9)
+	for(i = 0; i < (HIGH_SCORES_TABLE_LENGTH); i ++)
 	{
-		set_position(1, (scr_position % 5));
-		for (int k = 0; k < 9; k++)
+		set_position(8, i + 2);
+		for (j = 0; j < SRAM_HIGH_SCORE_LENGTH; j++)
 		{
-			print_char(high_scores[j + k]);
+			print_char(high_scores_sram[i * SRAM_HIGH_SCORE_LENGTH + j]);
 		}
-	}*/
+	}
 	
 	refresh_oled();
 	
@@ -349,7 +339,7 @@ InterfaceState interface_high_scores()
 			return State_Options;
 		}
 	}
-		
+	
 }
 
 /****************************************************************************
@@ -364,7 +354,9 @@ InterfaceState interface_options( )
 	JoystickDirection change_y, change_x;
 	TouchpadData touch_data;
 	ChangeTouchpadData change_touch_data;
-	char scr_position = 0;
+	uint8_t scr_position = 0;
+	
+	clear_oled();
 	
 	position = read_joystick_position();
 	direction = read_joystick_direction(position);
@@ -420,16 +412,17 @@ InterfaceState interface_options( )
 			switch(scr_position)
 			{
 				case 0:
-					return State_Mode;
+				return State_Mode;
 				case 1:
-					return State_Sound;
+				return State_Sound;
 				case 2:
-					return State_Username;
+				return State_Username;
 			}
 		}
 		refresh_oled();
 	}
 }
+
 
 /****************************************************************************
 * \brief Function call during the set mode phase
@@ -443,7 +436,9 @@ InterfaceState interface_mode()
 	JoystickDirection change_y;
 	TouchpadData touch_data;
 	ChangeTouchpadData change_touch_data;
-	char scr_position = 0;
+	uint8_t scr_position = 0;
+	
+	clear_oled();
 	
 	position = read_joystick_position();
 	direction = read_joystick_direction(position);
@@ -490,19 +485,20 @@ InterfaceState interface_mode()
 			switch(scr_position)
 			{
 				case 0:
-					send_game_mode(Normal_settings);
-					printf("Normal\n");
-					break;
+				send_game_mode(Reverse_settings);
+				printf("Normal\n");
+				break;
 				case 1:
-					//send_game_mode(Reverse_settings);
-					//printf("Reverse\n");
-					break;
+				send_game_mode(Normal_settings);
+				printf("Reverse\n");
+				break;
 			}
 			return State_Options;
 		}
 		refresh_oled();
 	}
 }
+
 
 /****************************************************************************
 * \brief Function call during the set sound phase
@@ -516,7 +512,9 @@ InterfaceState interface_sound()
 	JoystickDirection change_y;
 	TouchpadData touch_data;
 	ChangeTouchpadData change_touch_data;
-	char scr_position = 0;
+	uint8_t scr_position = 0;
+	
+	clear_oled();
 	
 	position = read_joystick_position();
 	direction = read_joystick_direction(position);
@@ -571,6 +569,7 @@ InterfaceState interface_sound()
 	}
 }
 
+
 /****************************************************************************
 * \brief Function call during the set sound phase
 *
@@ -580,6 +579,9 @@ InterfaceState interface_tutorial()
 	TouchpadData touch_data;
 	ChangeTouchpadData change_touch_data;
 	JoystickPosition position;
+	
+	clear_oled();
+	
 	set_position(14,0);
 	print_string("Tutorial");
 	revert_colour_line(0);
@@ -593,6 +595,7 @@ InterfaceState interface_tutorial()
 	while(! change_touch_data.leftButton)
 	{
 		position = read_joystick_position();
+		position.yaxis = 137;
 		touch_data = read_touchpad_data();
 		touch_data.rightTouchPad = 127;
 		touch_data.rightButton = 0;
@@ -652,27 +655,33 @@ InterfaceState interface_tutorial()
 ****************************************************************************/
 InterfaceState interface_print_mode(GameModes mode)
 {
+	
+	clear_oled();
+	current_mode = mode;
 	switch (mode)
 	{
 		case Easy :
-			set_position(14,0);
-			print_string("Easy");
-			break;
-			
+		set_position(14,0);
+		print_string("Easy");
+		break;
+		
 		case Normal :
-			set_position(12,0);
-			print_string("Normal");
-			break;
-			
+		set_position(12,0);
+		print_string("Normal");
+		break;
+		
 		case Hard :
-			set_position(12,0);
-			print_string("Hard");
-			break;
-						
+		set_position(12,0);
+		print_string("Hard");
+		break;
+		
 		case Insane :
-			set_position(12,0);
-			print_string("Insane");
-			break;
+		set_position(12,0);
+		print_string("Insane");
+		break;
+		
+		default :
+		break;
 	}
 	revert_colour_line(0);
 	refresh_oled();
@@ -681,26 +690,123 @@ InterfaceState interface_print_mode(GameModes mode)
 	
 }
 
+
+/****************************************************************************
+* \brief Main function running while playing the game
+*
+* 
+****************************************************************************/
 InterfaceState interface_playing()
 {
 	CANMessage canMessageNode2;
-	TouchpadData data;
+	TouchpadData touch_data;
+	ChangeTouchpadData change_touch_data;
 	JoystickPosition position;
+	char buffer[9];
+	uint16_t old_time = 0;
+	uint16_t current_time = 0;
+	
+	set_position(13,4);
+	print_string("SHOOT");
+	refresh_oled();
+	
+	touch_data = read_touchpad_data();
+	change_touch_data = change_touchpad_data(touch_data);
+	
+	while (!change_touch_data.rightButton)
+	{
+		touch_data = read_touchpad_data();
+		change_touch_data = change_touchpad_data(touch_data);
+	}
+	
+	set_position(13,4);
+	print_string("     ");
+	refresh_oled();
+	
+	timer1_reset();
+	current_time = old_time = timer1_get_time();
 	
 	do
 	{
 		position = read_joystick_position();
-		data = read_touchpad_data();
+		touch_data = read_touchpad_data();
 		
-		send_joystick_possition(position, data);
+		send_joystick_possition(position, touch_data);
 		_delay_ms(1);
+		
+		current_time = timer1_get_time();
+
+		if (current_time != old_time)
+		{
+			current_score = old_time * 10;
+			set_position(13,2);
+			print_string("Time");
+			snprintf(buffer, 9, "%02d:%02d:%02d",old_time / 3600 , old_time / 60, old_time % 60);
+			set_position(11,3);
+			print_string(buffer);
+			set_position(13,4);
+			print_string("Score"); 
+			snprintf(buffer, 9, "%05d",current_score);
+			set_position(13,5);
+			print_string(buffer);
+			
+			refresh_oled();
+			old_time = current_time;
+		}
 		
 		if(CAN_receive_message(&canMessageNode2) != SUCCESS)
 		{
-			canMessageNode2.ID = 0xFF;	
+			canMessageNode2.ID = 0xFF;
 		}
 		
-	} while(canMessageNode2.ID != 0x05);
+	} while(canMessageNode2.ID != 0x05);//current_time <= 10);//canMessageNode2.ID != 0x05);
 	
-	return State_Endgame; 
+	return State_Endgame;
+}
+
+
+/****************************************************************************
+* \brief Animations and high-scores handling
+*
+* 
+****************************************************************************/
+InterfaceState inteface_end_game()
+{
+	uint8_t position;
+	uint16_t old_time;
+	volatile char *ext_ram = (char *) SRAM_USERNAME_ADDR;
+	char name[USERNAME_LENGTH + 1];
+	char position_info[11];
+	uint8_t i;
+	
+	for(i = 0; i < USERNAME_LENGTH; i++)
+	{
+		name[i] = ext_ram[i];
+	}
+	name[USERNAME_LENGTH] = '\0';
+	
+	position = high_score_add(name, current_score);
+	
+	end_game_animation(0);
+	clear_oled();
+	set_position(10,3);
+	print_string("GAME OVER!");
+	if (position)
+	{
+		set_position(10,4);
+		snprintf(position_info, 11, "You are #%d", position);
+		print_string(position_info);
+	}
+	
+	refresh_oled();
+	
+	old_time = current_time = timer1_get_time();
+	old_time += 3;
+	while(current_time <= old_time)
+	{
+		current_time = timer1_get_time();
+	}
+	end_game_animation(1);
+	
+	return State_HighScores;
 }

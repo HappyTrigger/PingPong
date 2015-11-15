@@ -10,8 +10,6 @@
 #include <avr/io.h>
 #include "PING_PONG_LIB.h"
 #include <stdint.h>
-//#include <avr/interrupt.h>
-//#include <avr/delay.h>
 
 /****************************************************************************
 * \brief Initialize CAN communication with node 2
@@ -24,17 +22,6 @@ void CAN_init()
 	mcp_modify_bit(MCP_RXB0CTRL, 0b01100100, 0xFF);
 	/* Loopback mode enabled */
 	mcp_modify_bit(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
-	/* Interrupt after received buffer 0 */
-	//mcp_modify_bit(MCP_CANINTE, 0x01, 0x01);
-	/*
-	// Enable CAN interrupt 
-	clear_bit(DDRD, PD2);
-	
-	set_bit(GIFR, INT1);
-	set_bit(MCUCR, ISC11);
-	clear_bit(MCUCR, ISC10);
-	set_bit(GICR, INT1);
-	*/
 }
 
 /****************************************************************************
@@ -45,6 +32,7 @@ void CAN_init()
 ****************************************************************************/
 uint8_t CAN_send_message(CANMessage message)
 {
+	uint8_t i;
 	uint8_t ctrl = mcp_read(MCP_TXB0CTRL);
 	
 	if (test_bit(ctrl, TXREQ))
@@ -57,7 +45,7 @@ uint8_t CAN_send_message(CANMessage message)
 	
 	mcp_write_byte(MCP_TXB0DLC, (message.length) & 0x0F);
 	
-	for (int i = 0; i < message.length; i++)
+	for (i = 0; i < message.length; i++)
 	{
 		mcp_write_byte(MCP_TXB0D0 + i, message.data_array[i]);
 	}
@@ -75,7 +63,7 @@ uint8_t CAN_send_message(CANMessage message)
 ****************************************************************************/
 uint8_t CAN_receive_message(CANMessage* message)
 {
-	int i = 0;
+	uint8_t i = 0;
 	uint8_t received = mcp_read(MCP_CANINTF) & (0x01);
 	if (received)
 	{
@@ -97,15 +85,3 @@ uint8_t CAN_receive_message(CANMessage* message)
 	
 	return SUCCESS;
 }
-
-/*
-ISR(INT1_vect)
-{
-	cli();
-	printf("2\n");
-	//GIFR &= ~(1 << INT1);
-	mcp_modify_bit(MCP_CANINTF, 0x01, 0);
-	//printf("Interrupt\n");
-	sei();
-}
-*/

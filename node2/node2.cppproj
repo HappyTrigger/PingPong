@@ -584,13 +584,13 @@ vmresolved.tools.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
     <Folder Include="Visual Micro\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CAN_DRIVER.c">
+    <Compile Include="CAN_DRIVER.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="CAN_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="COM_LIB.c">
+    <Compile Include="COM_LIB.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="COM_LIB.h">
@@ -608,22 +608,22 @@ vmresolved.tools.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
     <Compile Include="DAC_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="IR_DRIVER.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="IR_DRIVER.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="MCP_ADDRESSES.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="MCP_DRIVER.c">
+    <Compile Include="MCP_DRIVER.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="MCP_DRIVER.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="SERVO_DRIVER.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="SERVO_DRIVER.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="SPI_DRIVER.c">
+    <Compile Include="SPI_DRIVER.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="SPI_DRIVER.h">

@@ -14,9 +14,9 @@
 * \brief Read data from ADC
 *
 ****************************************************************************/
-int read_adc(char channel)
+uint8_t ADC_read(uint8_t channel)
 {
-	volatile char *ext_adc = (char *) ADC_BASE_ADDR;
+	volatile uint8_t* ext_adc = (uint8_t*) ADC_BASE_ADDR;
 	
 	*ext_adc = channel;
 	_delay_ms(1);

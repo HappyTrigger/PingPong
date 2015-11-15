@@ -20,7 +20,7 @@ uint8_t send_joystick_possition(JoystickPosition joystick_position, TouchpadData
 	message.ID = 0x01;
 	message.length = 6;
 	
-	message.data_array[0] = (uint8_t) (joystick_position.xaxis);	
+	message.data_array[0] = (uint8_t) (joystick_position.xaxis);
 	message.data_array[1] = (uint8_t) (joystick_position.yaxis);
 	
 	message.data_array[2] = (uint8_t) (touchpad_data.rightTouchPad);

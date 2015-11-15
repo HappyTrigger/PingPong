@@ -8,13 +8,14 @@
 
 #ifndef OLED_DRIVER_H_
 #define OLED_DRIVER_H_
+
+#include <stdint.h>
+
 #define OLED_BASE_SRAM_ADDRESS SRAM_BASE_ADDR
 #define OLED_ADDR_SPACE_LEN 1024
 #define OLED_LINE_LENGTH_COLUMNS 128
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 64
-
-#include "JOYSTICK_DRIVER.h"
 
 typedef enum
 {
@@ -27,30 +28,28 @@ typedef enum
 } ScreenName;
 
 void init_oled();
-void write_c(char command);
-void write_d(char data);
+void write_c(uint8_t command);
+void write_d(uint8_t data);
 
 void refresh_oled();
 void clear_oled();
 void reset_position();
-int set_position(unsigned int column, unsigned int page);
+uint8_t set_position(uint8_t column, uint8_t page);
 
-int set_pixel(unsigned int x,unsigned int y);
-int unset_pixel(unsigned int x,unsigned int y);
+uint8_t set_pixel(uint8_t x,uint8_t y);
+uint8_t unset_pixel(uint8_t x,uint8_t y);
 
 void print_char(char character);
 void print_inverted_char(char character);
-int print_string(char* string);
-void revert_colour_line(unsigned char line);
+uint8_t print_string(char* string);
+void revert_colour_line(uint8_t line);
 
-int print_line(int x1, int y1, int x2, int y2);
-int print_polygon(int n, int* coord);
+uint16_t print_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+uint16_t print_polygon(uint16_t n, uint16_t* coord);
 
-void draw_circle(int xc, int yc, int r);
-
-
-void draw_screen(ScreenName name, JoystickDirection direction);
+void draw_circle(uint16_t xc, uint16_t yc, uint16_t r);
 
 void screensaver();
+void end_game_animation(uint8_t dir);
 
 #endif /* OLED_DRIVER_H_ */

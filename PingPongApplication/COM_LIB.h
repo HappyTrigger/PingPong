@@ -14,7 +14,7 @@
 
 typedef enum
 {
-	Tutorial=1,
+	Tutorial = 1,
 	Easy,
 	Normal,
 	Hard,

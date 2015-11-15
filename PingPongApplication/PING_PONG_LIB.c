@@ -8,6 +8,7 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include <util/delay.h>
+#include <string.h>
 #include "PING_PONG_LIB.h"
 #include "OLED_DRIVER.h"
 #include "USART_DRIVER.h"
@@ -23,7 +24,7 @@
 void init()
 {
 	USART_init(MYUBBR);
-	/* Enables standard IO functions */	
+	/* Enables standard IO functions */
 	fdevopen(USART_putchar, USART_getchar);
 	/* Enables external memory*/
 	set_bit(MCUCR, SRE);
@@ -41,7 +42,7 @@ void init()
 *
 ****************************************************************************/
 void led_toggle()
-{	
+{
 	if (test_bit(PINB, PB0))
 	{
 		clear_bit(PORTB, PB0);
@@ -50,7 +51,6 @@ void led_toggle()
 	{
 		set_bit(PORTB, PB0);
 	}
-	_delay_ms(BLINK_TIME);
 }
 
 
@@ -92,7 +92,10 @@ void SRAM_test(void)
 	printf("SRAM test completed with %d errors in write phase and %d errors in read phase\r\n", werrors, rerrors);
 }
 
-
+/****************************************************************************
+* \brief Read high scores from EEPROM
+*
+****************************************************************************/
 high_score high_score_read()
 {
 	high_score scores;
@@ -108,12 +111,19 @@ high_score high_score_read()
 	// Read high scores
 	for (i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
 	{
-		scores.score[i] = EEPROM_read(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + i);
+		scores.score[i] = (uint16_t) EEPROM_read(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + (2 * i));
+		scores.score[i] <<= 8;
+		scores.score[i] |= (uint16_t) EEPROM_read(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + (2 * i) + 1);
 	}
 	
 	return scores;
 }
 
+/****************************************************************************
+* \brief Write high scores to EEPROM
+* \param in High scores
+*
+****************************************************************************/
 void high_score_write(high_score scores)
 {
 	uint8_t i, j;
@@ -128,6 +138,82 @@ void high_score_write(high_score scores)
 	// Write high scores
 	for (i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
 	{
-		EEPROM_write(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + i, scores.score[i]);
+		EEPROM_write(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + (2 * i), (uint8_t) ((scores.score[i] >> 8) & 0xFF));
+		EEPROM_write(EEPROM_HIGH_SCORES_BASE_ADDR + HIGH_SCORES_TABLE_LENGTH * USERNAME_LENGTH + (2 * i) + 1, (uint8_t) (scores.score[i] & 0xFF));
 	}
+}
+
+/****************************************************************************
+* \brief Rewrite high scores from EEPROM to SRAM
+*
+****************************************************************************/
+void SRAM_high_score_write()
+{
+	volatile uint8_t* high_scores_sram = (uint8_t*) SRAM_HIGH_SCORES_ADDR;
+	char buffer[6];
+	uint8_t len, i, j;
+	high_score scores = high_score_read();
+	
+	for(i = 0; i < HIGH_SCORES_TABLE_LENGTH; i ++)
+	{
+		snprintf(buffer, 6, "%u", scores.score[i]);
+		len = strlen(buffer);
+		
+		for (j = 0; j < USERNAME_LENGTH; j++)
+		{
+			high_scores_sram[SRAM_HIGH_SCORE_LENGTH * i + j] = scores.username[i][j];
+		}
+		
+		high_scores_sram[SRAM_HIGH_SCORE_LENGTH * i + USERNAME_LENGTH] = ' ';
+		high_scores_sram[SRAM_HIGH_SCORE_LENGTH * i + USERNAME_LENGTH + 1] = ' ';
+		high_scores_sram[SRAM_HIGH_SCORE_LENGTH * i + USERNAME_LENGTH + 2] = ' ';
+		
+		for (j = 0; j < (5 - len); j ++)
+		{
+			high_scores_sram[SRAM_HIGH_SCORE_LENGTH * i + USERNAME_LENGTH + 3 + j] = ' ';
+		}
+		
+		
+		for (j = 0; j < len; j++)
+		{
+			high_scores_sram[SRAM_HIGH_SCORE_LENGTH * i + USERNAME_LENGTH + 3 + (5 - len) + j] = buffer[j];
+		}
+	}
+}
+
+/****************************************************************************
+* \brief Try to add new high score
+* \param in Username
+* \param in Score
+* \param out 0 if addition wasn't successful else position of new high score
+****************************************************************************/
+uint8_t high_score_add(char* name, uint16_t new_score)
+{
+	uint8_t i, j, k;
+	high_score scores = high_score_read();
+	
+	for (i = 0; i < HIGH_SCORES_TABLE_LENGTH; i++)
+	{
+		if (new_score > scores.score[i])
+		{
+			for (j = HIGH_SCORES_TABLE_LENGTH - 1; j > i; j--)
+			{
+				scores.score[j] = scores.score[j - 1];
+				for (k = 0; k < USERNAME_LENGTH; k++)
+				{
+					scores.username[j][k] = scores.username[j - 1][k];
+				}
+			}
+			scores.score[i] = new_score;
+			for (k = 0; k < USERNAME_LENGTH; k++)
+			{
+				scores.username[i][k] = name[k];
+			}
+			high_score_write(scores);
+			SRAM_high_score_write();
+			return i + 1;
+		}
+	}
+	
+	return 0;
 }

@@ -28,12 +28,14 @@ typedef struct TouchpadData
 
 typedef enum
 {
-  Tutorial=1,
+  No_mode,
+  Tutorial,
   Easy,
   Normal,
   Hard,
   Insane,
-  Normal_settings,
+  Settings_normal,
+  Settings_reverse,
   Endgame
 } GameModes;
 

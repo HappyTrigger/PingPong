@@ -33,10 +33,10 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <CONTROL_DRIVER.h>
 #include <DAC_DRIVER.cpp>
 #include <DAC_DRIVER.h>
+#include <IR_DRIVER.cpp>
+#include <IR_DRIVER.h>
 #include <MCP_ADDRESSES.h>
 #include <MCP_DRIVER.cpp>
 #include <MCP_DRIVER.h>
-#include <SERVO_DRIVER.cpp>
-#include <SERVO_DRIVER.h>
 #include <SPI_DRIVER.cpp>
 #include <SPI_DRIVER.h>

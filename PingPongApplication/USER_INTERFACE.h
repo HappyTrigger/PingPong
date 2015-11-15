@@ -8,6 +8,7 @@
 #include "OLED_DRIVER.h"
 #include "JOYSTICK_DRIVER.h"
 #include "COM_LIB.h"
+#include "TIME_DRIVER.h"
 #include <util/delay.h>
 
 
@@ -32,10 +33,8 @@ typedef enum
 	State_Endgame
 } InterfaceState;
 
-
-
 void interface_init();
-void interface_state_machine(); 
+void interface_state_machine();
 InterfaceState interface_username();
 InterfaceState interface_new_game();
 InterfaceState interface_high_scores();
@@ -44,13 +43,7 @@ InterfaceState interface_sound();
 InterfaceState interface_mode();
 InterfaceState interface_tutorial();
 InterfaceState interface_print_mode(GameModes mode);
-//InterfaceState interface_normal();
-//InterfaceState interface_hard();
-//InterfaceState interface_insane();
 InterfaceState interface_playing();
-
-
-
-
+InterfaceState inteface_end_game();
 
 #endif /* USER_INTERFACE_H_ */

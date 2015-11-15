@@ -11,7 +11,7 @@
 
 
 /****************************************************************************
-* \brief Enable communication with CAN controller 
+* \brief Enable communication with CAN controller
 *
 ****************************************************************************/
 void mcp_turn_on()

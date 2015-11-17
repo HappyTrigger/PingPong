@@ -16,7 +16,8 @@ uint8_t is_IR_interrupted()
 	uint16_t sensorValue = 0;
 	uint8_t retVal = 0;
 	sensorValue = analogRead(A1);
-	if (sensorValue < 100)
+	//Serial.println(sensorValue);
+	if (sensorValue < 5)
 	{
 		retVal = 1; //Something is blocking the IR
 	}

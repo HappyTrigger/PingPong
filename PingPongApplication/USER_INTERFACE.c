@@ -86,8 +86,8 @@ void interface_state_machine()
 		state = interface_options();
 		break;
 		
-		case State_Sound :
-		state = interface_sound();
+		case State_Clear_HighScores :
+		state = interface_clear_highscores();
 		break;
 		
 		case  State_Mode :
@@ -251,13 +251,13 @@ InterfaceState interface_new_game()
 		{
 			set_position(1, (scr_position % 5) + 2);
 			print_char(' ');
-			scr_position--;
+			scr_position = scr_position == 0 ? 4 : scr_position - 1;
 		}
 		else if (change_y == Down)
 		{
 			set_position(1, (scr_position % 5) + 2);
 			print_char(' ');
-			scr_position++;
+			scr_position = scr_position == 4 ? 0 : scr_position + 1;
 		}
 		
 		set_position(1, (scr_position % 5) + 2);
@@ -369,7 +369,7 @@ InterfaceState interface_options( )
 	set_position(3,3);
 	print_string("Mode");
 	set_position(3,4);
-	print_string("Sound");
+	print_string("Clear HighScore");
 	set_position(3,5);
 	print_string("Change Username");
 	
@@ -393,13 +393,13 @@ InterfaceState interface_options( )
 		{
 			set_position(1, (scr_position % 3) + 3);
 			print_char(' ');
-			scr_position--;
+			scr_position = scr_position == 0 ? 2 : scr_position - 1;
 		}
 		else if (change_y == Down)
 		{
 			set_position(1, (scr_position % 3) + 3);
 			print_char(' ');
-			scr_position++;
+			scr_position = scr_position == 2 ? 0 : scr_position + 1;
 		}
 		
 		set_position(1, (scr_position % 3) + 3);
@@ -414,7 +414,7 @@ InterfaceState interface_options( )
 				case 0:
 				return State_Mode;
 				case 1:
-				return State_Sound;
+				return State_Clear_HighScores;
 				case 2:
 				return State_Username;
 			}
@@ -466,13 +466,13 @@ InterfaceState interface_mode()
 		{
 			set_position(1, (scr_position % 2) * 2 + 3);
 			print_char(' ');
-			scr_position--;
+			scr_position = scr_position == 0 ? 1 : 0;
 		}
 		else if (change_y == Down)
 		{
 			set_position(1, (scr_position % 2) * 2 + 3);
 			print_char(' ');
-			scr_position++;
+			scr_position = scr_position == 1 ? 0 : 1;
 		}
 		
 		set_position(1, (scr_position % 2) * 2 + 3);
@@ -505,7 +505,7 @@ InterfaceState interface_mode()
 *
 
 ****************************************************************************/
-InterfaceState interface_sound()
+InterfaceState interface_clear_highscores()
 {
 	JoystickPosition position;
 	JoystickDirection direction;
@@ -520,13 +520,13 @@ InterfaceState interface_sound()
 	direction = read_joystick_direction(position);
 	change_y = change_yaxis(direction);
 
-	set_position(14,0);
-	print_string("Sound");
+	set_position(7,0);
+	print_string("Clear HighScores");
 	revert_colour_line(0);
 	set_position(3,3);
-	print_string("On");
+	print_string("YES");
 	set_position(3,5);
-	print_string("Off");
+	print_string("NO");
 	
 	while(1)
 	{
@@ -538,13 +538,13 @@ InterfaceState interface_sound()
 		{
 			set_position(1, (scr_position % 2) * 2 + 3);
 			print_char(' ');
-			scr_position--;
+			scr_position = scr_position == 0 ? 1 : 0;
 		}
 		else if (change_y == Down)
 		{
 			set_position(1, (scr_position % 2) * 2 + 3);
 			print_char(' ');
-			scr_position++;
+			scr_position = scr_position == 1 ? 0 : 1;
 		}
 		
 		set_position(1, (scr_position % 2) * 2 + 3);
@@ -556,12 +556,13 @@ InterfaceState interface_sound()
 		{
 			switch(scr_position)
 			{
+				
 				case 0:
-				printf("ON\n");
-				break;
+					high_score_clear();
+					SRAM_high_score_write();
+					break;
 				case 1:
-				printf("OFF\n");
-				break;
+					break;
 			}
 			return State_Options;
 		}
@@ -655,8 +656,6 @@ InterfaceState interface_tutorial()
 ****************************************************************************/
 InterfaceState interface_print_mode(GameModes mode)
 {
-	
-	clear_oled();
 	current_mode = mode;
 	switch (mode)
 	{
@@ -684,7 +683,7 @@ InterfaceState interface_print_mode(GameModes mode)
 		break;
 	}
 	revert_colour_line(0);
-	refresh_oled();
+	//refresh_oled();
 	
 	return State_Playing;
 	
@@ -705,7 +704,33 @@ InterfaceState interface_playing()
 	char buffer[9];
 	uint16_t old_time = 0;
 	uint16_t current_time = 0;
+	uint8_t multiplier = 0;
+	uint8_t pl = 0;
 	
+	switch(current_mode)
+	{
+		case Easy:
+			multiplier = 1;
+			break;
+			
+		case Normal:
+			multiplier = 2;
+			break;
+			
+		case Hard:
+			multiplier = 3;
+			break;
+			
+		case Insane:
+			multiplier = 4;
+			break;
+		
+		default:
+			multiplier = 1;
+	}
+	
+	clear_oled();
+	interface_print_mode(current_mode);
 	set_position(13,4);
 	print_string("SHOOT");
 	refresh_oled();
@@ -738,7 +763,9 @@ InterfaceState interface_playing()
 
 		if (current_time != old_time)
 		{
-			current_score = old_time * 10;
+			clear_oled();
+			interface_print_mode(current_mode);
+			current_score = old_time * multiplier;
 			set_position(13,2);
 			print_string("Time");
 			snprintf(buffer, 9, "%02d:%02d:%02d",old_time / 3600 , old_time / 60, old_time % 60);
@@ -757,6 +784,31 @@ InterfaceState interface_playing()
 		if(CAN_receive_message(&canMessageNode2) != SUCCESS)
 		{
 			canMessageNode2.ID = 0xFF;
+		}
+		else
+		{
+			switch (canMessageNode2.ID)
+			{
+				case 0x06:
+					minigame_push_buttons();
+					break;
+
+				case 0x07:
+					minigame_slide_left_slider_left();
+					break;
+					
+				case 0x08:
+					minigame_slide_both_sliders_apart();
+					break;
+					
+				case 0x09:
+					minigame_push_left_button_7x();
+					break;
+					
+				case 0x0A:
+					minigame_buttons_in_random_order(canMessageNode2.data_array[0]);
+					break;
+			}
 		}
 		
 	} while(canMessageNode2.ID != 0x05);//current_time <= 10);//canMessageNode2.ID != 0x05);
@@ -809,4 +861,148 @@ InterfaceState inteface_end_game()
 	end_game_animation(1);
 	
 	return State_HighScores;
+}
+
+uint8_t minigame_push_buttons()
+{
+	TouchpadData touch_data;
+	
+	clear_oled();
+	set_position(7,3);
+	print_string("PUSH BOTH BUTTONS!");
+	refresh_oled();
+	
+	while (1)
+	{	
+		touch_data = read_touchpad_data();
+		if (touch_data.leftButton && touch_data.rightButton)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+uint8_t minigame_slide_left_slider_left()
+{
+	TouchpadData touch_data;
+	uint8_t been_right = 0;
+	
+	clear_oled();
+	set_position(4,3);
+	print_string("SLIDE LEFT SLIDER FROM");
+	set_position(4,4);
+	print_string("THE RIGHT TO THE LEFT!");
+	refresh_oled();
+	
+	while (1)
+	{
+		touch_data = read_touchpad_data();
+		if (!been_right && touch_data.leftTouchPad > 220)
+		{
+			been_right = 1;
+		}
+		
+		if (been_right && touch_data.leftTouchPad < 20)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+uint8_t minigame_slide_both_sliders_apart()
+{
+	TouchpadData touch_data;
+	uint8_t left_been_right = 0;
+	uint8_t right_been_left = 0;
+	
+	clear_oled();
+	set_position(3,3);
+	print_string("SLIDE BOTH SLIDERS APART!");
+	refresh_oled();
+	
+	while (1)
+	{
+		touch_data = read_touchpad_data();
+		if (!left_been_right && touch_data.leftTouchPad > 220)
+		{
+			left_been_right = 1;
+		}
+		
+		if (!right_been_left && touch_data.rightTouchPad < 20)
+		{
+			right_been_left = 1;
+		}
+		
+		if (left_been_right && right_been_left && (touch_data.leftTouchPad < 20) && (touch_data.rightTouchPad > 220))
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+uint8_t minigame_push_left_button_7x()
+{
+	TouchpadData touch_data;
+	ChangeTouchpadData change_data;
+	uint8_t count = 7;
+	
+	clear_oled();
+	set_position(5,3);
+	print_string("PUSH LEFT BUTTON 7x!");
+	refresh_oled();
+	
+	while (count)
+	{
+		touch_data = read_touchpad_data();
+		change_data = change_touchpad_data(touch_data);
+		if (change_data.leftButton)
+		{
+			count--;
+		}
+	}
+	return 1;
+}
+uint8_t minigame_buttons_in_random_order(uint8_t order)
+{
+	TouchpadData touch_data;
+	ChangeTouchpadData change_data;
+	
+	clear_oled();
+	set_position(10,2);
+	print_string("PUSH BUTTONS!");
+	refresh_oled();
+	
+	order &= 0x1F;
+	order |= 0x20;
+	
+	while (order != 1)
+	{
+		if (!(order & 0x01))
+		{
+			set_position(15,4);
+			print_string("LEFT ");
+			refresh_oled();
+			do
+			{
+				touch_data = read_touchpad_data();
+				change_data = change_touchpad_data(touch_data);
+			}
+			while (!change_data.leftButton);
+		}
+		else
+		{
+			set_position(15,4);
+			print_string("RIGHT");
+			refresh_oled();
+			do
+			{
+				touch_data = read_touchpad_data();
+				change_data = change_touchpad_data(touch_data);
+			}
+			while (!change_data.rightButton);
+		}
+		order >>= 1;
+		order &= 0x7F;
+	}
+	return 1;	
 }

@@ -6,6 +6,7 @@
  */
 #include "COM_LIB.h"
 #include "MCP_ADDRESSES.h"
+#include <Arduino.h>
 
 
 /****************************************************************************
@@ -103,4 +104,36 @@ uint8_t end_game()
 	
 	
 	return CAN_send_message(message);
+}
+
+uint8_t request_minigame()
+{
+	CANMessage minigame_message;
+	minigame_message.length = 0;
+	
+	uint8_t random_game = random(0,5); 
+	uint8_t random_value = random(0, 255);
+	
+	switch (random_game)
+	{
+		case 0:
+			minigame_message.ID = 0x06;
+			break;
+		case 1:
+			minigame_message.ID = 0x07;
+			break;
+		case 2:
+			minigame_message.ID = 0x08;
+			break;
+		case 3:
+			minigame_message.ID = 0x09;
+			break;
+		case 4:
+			minigame_message.ID = 0x0A;
+			minigame_message.length = 1;
+			minigame_message.data_array[0] = random_value;
+			break;
+
+	}
+	return CAN_send_message(minigame_message);
 }

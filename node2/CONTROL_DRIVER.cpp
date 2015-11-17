@@ -29,8 +29,8 @@ uint16_t output = 0;
 double errorSum, lastError;
 int8_t acceptedError = 15;
 
-//const int RIGHT_DIRECTION = 2;
-//const int LEFT_DIRECTION = 1;
+
+
 
 
 
@@ -190,6 +190,7 @@ int position_controller(uint8_t position_value)
   if(error < acceptedError){
     speed_controller(0, motor_direction);
     errorSum=0;
+	return 0;
   }
   //int16_t dError = (error - lastError)/timeChange;
   errorSum += (error*timeChange);
@@ -203,24 +204,31 @@ int position_controller(uint8_t position_value)
 
 
   speed_controller(output, motor_direction);
-  return output;
+  return 1;
 }
 
 
-int8_t joystick_position_controller(JoystickPosition* joystick_position)
+int8_t joystick_position_controller(JoystickPosition* joystick_position, Control_settings settings)
 {
-	int16_t temp = joystick_position->yaxis;
-	
+	int16_t temp = joystick_position->xaxis;
 	int8_t dir;
 	temp = temp - 137; // A little calibration
 	if (temp < 0 )
 	{
 		dir = LEFT_DIRECTION;
+		
+		if(settings == REVERSE){
+			dir = RIGHT_DIRECTION;
+		}
 	}
 	else if(temp > 0)
 	{//move to the right
 		dir = RIGHT_DIRECTION;
+		if(settings == REVERSE){
+			dir = LEFT_DIRECTION;
+		}
 	}
+	
 	
 	temp = abs(temp); 
 	speed_controller(temp, dir);
@@ -233,11 +241,10 @@ void change_pi_param(float pi_kp, float pi_ki)
    ki = pi_ki; 
 }
 
-void change_accepted_error(
 
 
 
-uint8_t servo_value_mapping(int8_t servo_value, Control_settings settings ){
+uint8_t servo_value_mapping(uint8_t servo_value, Control_settings settings ){
 	uint8_t retVal;
 	if(settings == REVERSE)
 	{
@@ -250,10 +257,30 @@ uint8_t servo_value_mapping(int8_t servo_value, Control_settings settings ){
 	return retVal;
 }
 
+uint8_t motor_value_mapping(uint8_t touchpad_value, Control_settings settings ){
+	uint8_t retVal;
+	if(settings == REVERSE)
+	{
+		retVal = (map(touchpad_value, 0, 255, 255, 0));
+	}
+	else
+	{
+		retVal = (map(touchpad_value, 0, 255, 0, 255));
+	}
+	return retVal;
+}
 
 
 
+void change_accepted_error(uint8_t error)
+{
+	acceptedError = error;
+}
 
+void change_max_speed(uint8_t max_speed)
+{
+	MAX_SPEED = max_speed;
+}
 
 
 

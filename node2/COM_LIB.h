@@ -50,5 +50,6 @@ void receive_mode_change(Mode* CurrentMode, CANMessage message);
 
 uint8_t change_touchpad_data(uint8_t new_right_button_status);
 uint8_t end_game();
+uint8_t request_minigame();
 
 #endif /* COM_LIB_H_ */

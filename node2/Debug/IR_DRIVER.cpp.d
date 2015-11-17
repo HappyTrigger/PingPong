@@ -1,9 +1,7 @@
-C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\COM_LIB.cpp.o: \
- C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\COM_LIB.cpp \
- C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\COM_LIB.h \
- C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\CAN_DRIVER.h \
- C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\MCP_ADDRESSES.h \
- C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
+C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\IR_DRIVER.cpp.o: \
+ C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\IR_DRIVER.cpp \
+ C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\IR_DRIVER.h \
+ C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/WString.h \

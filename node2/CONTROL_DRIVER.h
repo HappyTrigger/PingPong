@@ -46,12 +46,17 @@ int16_t read_encoder();
 
 int position_controller(uint8_t position_value);
 
-int8_t joystick_position_controller(JoystickPosition* joystick_position);
+int8_t joystick_position_controller(JoystickPosition* joystick_position, Control_settings settings);
 
 void change_pi_param(float pi_kp, float pi_ki);
 
-uint8_t servo_value_mapping(int8_t servo_value, Control_settings setting );
+uint8_t servo_value_mapping(uint8_t servo_value, Control_settings setting );
 
+uint8_t motor_value_mapping(uint8_t touchpad_value, Control_settings settings );
+
+void change_accepted_error(uint8_t error);
+
+void change_max_speed(uint8_t max_speed);
 #endif
 //#endif
 

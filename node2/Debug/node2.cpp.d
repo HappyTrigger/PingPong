@@ -18,7 +18,7 @@ C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega
  C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\MCP_DRIVER.h \
  C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\MCP_ADDRESSES.h \
  C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\SPI_DRIVER.h \
- C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\SERVO_DRIVER.h \
+ C:\Users\TEMP.WIN-NTNU-NO\AppData\Local\V.Micro\Arduino\Builds\node2\mega_atmega2560\IR_DRIVER.h \
  C:\Program\ Files\ (x86)\Arduino\libraries\Servo\src/Servo.h \
  C:\Program\ Files\ (x86)\Arduino\libraries\Servo\src/avr/ServoTimers.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\libraries\Wire/Wire.h \

@@ -43,4 +43,5 @@ uint8_t high_score_add(char* name, uint16_t new_score);
 
 void SRAM_high_score_write();
 
+void high_score_clear();
 #endif /*_PING_PONG_LIBRARY_*/

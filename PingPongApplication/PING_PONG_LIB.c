@@ -14,6 +14,8 @@
 #include "USART_DRIVER.h"
 #include "USER_INTERFACE.h"
 #include "EEPROM.h"
+#include "TIME_DRIVER.h"
+#include "CAN_DRIVER.h"
 
 
 
@@ -34,7 +36,13 @@ void init()
 	clear_bit(PORTB, PB0);
 	/* Initialize OLED display */
 	init_oled();
+	timer1_init();
+	CAN_init();
 	interface_init();
+	clear_oled();
+	reset_position();
+	refresh_oled();
+	sei();
 }
 
 /****************************************************************************
@@ -216,4 +224,22 @@ uint8_t high_score_add(char* name, uint16_t new_score)
 	}
 	
 	return 0;
+}
+
+
+void high_score_clear()
+{
+	
+	high_score scores;
+	strncpy ( scores.username[0], "     \0", 6 );
+	strncpy ( scores.username[1], "     \0", 6 );
+	strncpy ( scores.username[2], "     \0", 6 );
+	strncpy ( scores.username[3], "     \0", 6 );
+	strncpy ( scores.username[4], "     \0", 6 );
+	scores.score[0] = 0x0000;
+	scores.score[1] = 0x0000;
+	scores.score[2] = 0x0000;
+	scores.score[3] = 0x0000;
+	scores.score[4] = 0x0000;
+	high_score_write(scores);
 }

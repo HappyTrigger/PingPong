@@ -26,6 +26,7 @@ Control_settings g_setting;
 
 uint16_t temp;
 int16_t temp_bit;
+long random_event_timer;
 
 
 
@@ -49,21 +50,23 @@ void setup()
   dac_init();
   encoder_calibration();
   temp_bit = return_max();
-  Serial.println(temp_bit);
   delay(1000);
-  speed_controller(0,2); 
+  speed_controller(0,LEFT_DIRECTION); 
 
   //Shooting-mech
   pinMode(SHOOTING_PIN, OUTPUT);
   digitalWrite(SHOOTING_PIN, HIGH);
 
-  //GameMode init
+  //value init
   g_mode.gamemode = No_mode;
   g_setting = NORMAL_SETTINGS;
+  j_position.xaxis = 127;
+  j_position.yaxis = 127;
+  t_data.rightTouchPad = 127;
+  t_data.leftTouchPad = 127;
   
   
-
-
+  randomSeed(analogRead(0));
 }
 
 void loop()
@@ -72,88 +75,97 @@ void loop()
 
   if( SUCCESS == receive_and_decode_message(&j_position, &t_data, &g_mode))
   {
-   //ServoController
-   //Serial.println(j_position.xaxis);
-   //servo_value_mapping(j_position.xaxis, g_setting);
-   
-
-   
-   if(g_setting == NORMAL_SETTINGS){
-	   myservo.write(map(j_position.xaxis, 0, 255, 180, 0));
-   }
-   else if(g_setting == REVERSE_SETTINGS){
-	   myservo.write(map(j_position.xaxis, 0, 255, 0, 180));
-   }
-	
    //Shooting_mech
-   /*
    if(change_touchpad_data(t_data.rightButton) == 1)
    {
       digitalWrite(SHOOTING_PIN, LOW);
       delay(50);
       digitalWrite(SHOOTING_PIN, HIGH);
-   }*/
-   
+   }
   }  
 
-/*
-  if(is_IR_interrupted()){
+
+  if(is_IR_interrupted())
+  {
     //Something is blocking the IR
     //Do nothing if not playing the game
-    if(g_mode.gamemode >= 1 && g_mode.gamemode <= 5 && g_mode.gamemode == Reverse_settings || g_mode.gamemode == Normal_settings ){
+    if(g_mode.gamemode >= Tutorial && g_mode.gamemode <= Insane)
+	{
       //Gamelost 
         g_mode.gamemode = Endgame;
     }
-  }*/
-
-  if(change_touchpad_data(t_data.leftButton) == 1){
-	  g_mode.gamemode = Endgame;
   }
-
 
   switch(g_mode.gamemode){
     case No_mode:
 		break;
 	
 	case Tutorial:
-		temp = position_controller(t_data.rightTouchPad);
+		position_controller(motor_value_mapping(t_data.rightTouchPad, g_setting));
+		myservo.write(servo_value_mapping(j_position.xaxis, g_setting));
 		break;
 		
     case Easy:
-		temp_bit=joystick_position_controller(&j_position);
-		
+		joystick_position_controller(&j_position, g_setting);
+		myservo.write(servo_value_mapping(j_position.yaxis, g_setting));	
 		break;
 		
     case Normal:
-		temp = position_controller(t_data.rightTouchPad);
+		position_controller(motor_value_mapping(t_data.rightTouchPad, g_setting));
+		myservo.write(servo_value_mapping(j_position.xaxis, g_setting));
 		break;
 		
     case Hard:
-		temp = position_controller(t_data.rightTouchPad);
+		static uint8_t hard_value;
+		hard_value = map(t_data.leftTouchPad, 0, 255, 0, 150);
+		change_max_speed(hard_value);
+		change_accepted_error(3);
+		temp = position_controller(motor_value_mapping(t_data.rightTouchPad, g_setting));
+		myservo.write(servo_value_mapping(j_position.xaxis, g_setting));
+		change_pi_param(3.3, 2.5);
 		break;
 		
     case Insane:
-		temp = position_controller(t_data.rightTouchPad);	
-		change_pi_param(1.3, 2.5);
+		static uint8_t insane_value = 0;
+		random_event_timer = (millis() / 1000) % 20;
+		Serial.println(random_event_timer);
+		if(random_event_timer > 19)
+		{
+			request_minigame();
+		}
+		insane_value = map(random(0,255), 0, 255, 0, 150);
+		change_max_speed(120);
+		change_accepted_error(3);
+		change_pi_param(3.3, 2.5);
+		
+		temp = position_controller(motor_value_mapping(t_data.rightTouchPad, g_setting));
+		myservo.write(servo_value_mapping(j_position.xaxis, g_setting));
 		break;
 		
     case Settings_normal:
 		g_setting = NORMAL_SETTINGS;
 		change_pi_param(1.7, 0.9);
+		change_accepted_error(15);
+		change_max_speed(100);
 		break;
 		
     case Settings_reverse:
 		g_setting = REVERSE_SETTINGS;
+		change_pi_param(1.7, 0.9);
+		change_accepted_error(15);
+		change_max_speed(100);
 		break;
 		
     case Endgame:
 		end_game();
-		g_mode.gamemode=0;
-		g_setting = NORMAL_SETTINGS;
+		myservo.write(servo_value_mapping(125, g_setting));
+		while(position_controller(127));
+		g_mode.gamemode = No_mode;
+		change_max_speed(100);
+		change_accepted_error(15);
 		break;
 		
     default:
-		//Serial.println(9);
 		break;
   }
   

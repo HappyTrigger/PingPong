@@ -8,9 +8,8 @@
 
 #ifndef COM_LIB_H_
 #define COM_LIB_H_
-#include <stdint.h>
 #include "JOYSTICK_DRIVER.h"
-#include "CAN_DRIVER.h"
+#include <stdint.h>
 
 typedef enum
 {

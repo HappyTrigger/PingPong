@@ -7,8 +7,8 @@
 
 #include "CAN_DRIVER.h"
 #include "MCP_DRIVER.h"
-#include <avr/io.h>
 #include "PING_PONG_LIB.h"
+#include <avr/io.h>
 #include <stdint.h>
 
 /****************************************************************************

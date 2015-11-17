@@ -5,13 +5,13 @@
  *  Author: michalma
  */ 
 
+#include "OLED_DRIVER.h"
+#include "PING_PONG_LIB.h"
+#include "JOYSTICK_DRIVER.h"
 #include <avr/delay.h>
 #include <avr/pgmspace.h>
 #include <string.h>
 #include <stdlib.h>
-#include "OLED_DRIVER.h"
-#include "PING_PONG_LIB.h"
-#include "JOYSTICK_DRIVER.h"
 
 static unsigned int position = 0;
 

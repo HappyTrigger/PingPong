@@ -1,5 +1,3 @@
-
-
 #ifndef _IR_DRIVER_h
 #define _IR_DRIVER_h
 

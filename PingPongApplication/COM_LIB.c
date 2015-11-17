@@ -5,7 +5,7 @@
  *  Author: michalma
  */ 
 #include "COM_LIB.h"
-#include "JOYSTICK_DRIVER.h"
+#include "CAN_DRIVER.h"
 
 /****************************************************************************
 * \brief Send joystick position to Node2 trough CAN

@@ -1,7 +1,8 @@
 MCP_DRIVER.d MCP_DRIVER.o: .././MCP_DRIVER.c .././MCP_DRIVER.h \
+ .././MCP_ADDRESSES.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\lib\gcc\avr\4.8.1\include\stdint.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\stdint.h \
- .././MCP_ADDRESSES.h .././SPI_DRIVER.h \
+ .././SPI_DRIVER.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -17,11 +18,11 @@ MCP_DRIVER.d MCP_DRIVER.o: .././MCP_DRIVER.c .././MCP_DRIVER.h \
 
 .././MCP_DRIVER.h:
 
+.././MCP_ADDRESSES.h:
+
 c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\lib\gcc\avr\4.8.1\include\stdint.h:
 
 c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\stdint.h:
-
-.././MCP_ADDRESSES.h:
 
 .././SPI_DRIVER.h:
 

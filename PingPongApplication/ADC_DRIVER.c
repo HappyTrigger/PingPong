@@ -5,10 +5,8 @@
  *  Author: haakongn
  */ 
 #include "ADC_DRIVER.h"
-
-#include <avr/delay.h>
-
 #include "PING_PONG_LIB.h"
+#include <avr/delay.h>
 
 /****************************************************************************
 * \brief Read data from ADC

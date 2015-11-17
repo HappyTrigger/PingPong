@@ -1,20 +1,5 @@
-#include <Wire.h>
-
-// 
-// 
-// 
-
 #include "DAC_DRIVER.h"
-
-/****************************************************************************
-* \brief Initialize the digital-analog converter
-*
-* \param in byte to be written
-****************************************************************************/
-void dac_init()
-{
-  Wire.begin();
-}
+#include <Wire.h>
 
 /****************************************************************************
 * \brief Write data to digital-analog converter

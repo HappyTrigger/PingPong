@@ -9,9 +9,9 @@
 #ifndef TIME_DRIVER_H_
 #define TIME_DRIVER_H_
 
+#include "PING_PONG_LIB.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include "PING_PONG_LIB.h"
 
 volatile static uint16_t current_time;
 

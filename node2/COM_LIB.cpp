@@ -95,17 +95,25 @@ uint8_t change_touchpad_data(uint8_t new_right_button_status)
   return ret_val;
 }
 
-
+/***********************************************************************************
+* \brief Send message to node1 indicating that the game has ended
+*
+* \return Success if the message has been sent
+***********************************************************************************/
 uint8_t end_game()
 {
 	CANMessage message;
 	message.ID = 0x05;
 	message.length = 0;
 	
-	
 	return CAN_send_message(message);
 }
 
+/***********************************************************************************
+* \brief Request main board for minigame
+*
+* \return Success if the message has been sent
+***********************************************************************************/
 uint8_t request_minigame()
 {
 	CANMessage minigame_message;

@@ -9,8 +9,8 @@
 #ifndef MCP_DRIVER_H_
 #define MCP_DRIVER_H_
 
-#include <stdint.h>
 #include "MCP_ADDRESSES.h"
+#include <stdint.h>
 
 void mcp_reset();
 void mcp_turn_on();

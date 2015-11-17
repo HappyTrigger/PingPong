@@ -6,7 +6,6 @@
  */ 
 
 #include "TIME_DRIVER.h"
-#include <avr/io.h>
 
 void timer1_init()
 {

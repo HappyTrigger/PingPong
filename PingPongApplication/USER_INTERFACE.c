@@ -9,6 +9,7 @@
 #include "PING_PONG_LIB.h"
 #include "COM_LIB.h"
 #include "MCP_ADDRESSES.h"
+#include "CAN_DRIVER.h"
 #include <avr/eeprom.h>
 #include <stdio.h>
 
@@ -30,7 +31,7 @@ void interface_init()
 	}
 	
 	SRAM_high_score_write();
-	
+	send_game_mode(Normal_settings);
 }
 
 
@@ -501,7 +502,7 @@ InterfaceState interface_mode()
 
 
 /****************************************************************************
-* \brief Function call during the set sound phase
+* \brief Function call during the clearing of highscores
 *
 
 ****************************************************************************/
@@ -572,7 +573,7 @@ InterfaceState interface_clear_highscores()
 
 
 /****************************************************************************
-* \brief Function call during the set sound phase
+* \brief Function call during the tutorial game
 *
 ****************************************************************************/
 InterfaceState interface_tutorial()
@@ -811,7 +812,7 @@ InterfaceState interface_playing()
 			}
 		}
 		
-	} while(canMessageNode2.ID != 0x05);//current_time <= 10);//canMessageNode2.ID != 0x05);
+	} while(canMessageNode2.ID != 0x05);
 	
 	return State_Endgame;
 }
@@ -863,6 +864,10 @@ InterfaceState inteface_end_game()
 	return State_HighScores;
 }
 
+/****************************************************************************
+* \brief Minigame, both buttons should be pushed
+*
+****************************************************************************/
 uint8_t minigame_push_buttons()
 {
 	TouchpadData touch_data;
@@ -882,6 +887,11 @@ uint8_t minigame_push_buttons()
 	}
 	return 0;
 }
+
+/****************************************************************************
+* \brief Minigame, left slider should be swiped from right to left
+*
+****************************************************************************/
 uint8_t minigame_slide_left_slider_left()
 {
 	TouchpadData touch_data;
@@ -909,6 +919,11 @@ uint8_t minigame_slide_left_slider_left()
 	}
 	return 0;
 }
+
+/****************************************************************************
+* \brief Minigame, both sliders should be swiped from center to sides
+*
+****************************************************************************/
 uint8_t minigame_slide_both_sliders_apart()
 {
 	TouchpadData touch_data;
@@ -940,6 +955,11 @@ uint8_t minigame_slide_both_sliders_apart()
 	}
 	return 0;
 }
+
+/****************************************************************************
+* \brief Minigame, left button has to be pushed 7 times
+*
+****************************************************************************/
 uint8_t minigame_push_left_button_7x()
 {
 	TouchpadData touch_data;
@@ -962,6 +982,12 @@ uint8_t minigame_push_left_button_7x()
 	}
 	return 1;
 }
+
+/****************************************************************************
+* \brief Minigame, buttons should be pushed in order defined by in value
+*
+* \param in order of buttons in binary
+****************************************************************************/
 uint8_t minigame_buttons_in_random_order(uint8_t order)
 {
 	TouchpadData touch_data;

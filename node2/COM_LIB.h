@@ -26,6 +26,11 @@ typedef struct TouchpadData
   volatile uint8_t leftButton;
 } TouchpadData;
 
+typedef struct Mode
+{
+	volatile uint8_t gamemode;
+}Mode;
+
 typedef enum
 {
   No_mode,
@@ -39,10 +44,7 @@ typedef enum
   Endgame
 } GameModes;
 
-typedef struct Mode
-{
-  volatile uint8_t gamemode;
-}Mode;
+
 
 uint8_t receive_and_decode_message(JoystickPosition* joystick_position, TouchpadData* touchpad_data, Mode* game_mode);
 void receive_joistick_position(JoystickPosition* joystick_position, TouchpadData* touchpad_data, CANMessage message);

@@ -6,11 +6,9 @@
  */ 
 
 #include "JOYSTICK_DRIVER.h"
-
-#include <avr/io.h>
-
 #include "PING_PONG_LIB.h"
 #include "ADC_DRIVER.h"
+#include <avr/io.h>
 #include <stdlib.h>
 
 /****************************************************************************

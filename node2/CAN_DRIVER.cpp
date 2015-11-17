@@ -1,5 +1,5 @@
 /*
- * CAN_DRIVER.c
+ * CAN_DRIVER.cpp
  *
  * Created: 01.10.2015 13:50:02
  *  Author: haakongn
@@ -9,8 +9,6 @@
 #include "MCP_DRIVER.h"
 #include <avr/io.h>
 #include <stdint.h>
-//#include <avr/interrupt.h>
-//#include <avr/delay.h>
 
 /****************************************************************************
 * \brief Initialize CAN communication with main board

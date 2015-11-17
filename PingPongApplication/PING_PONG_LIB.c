@@ -5,10 +5,6 @@
  *  Author: michalma
  */ 
 
-#include <avr/io.h>
-#include <stdio.h>
-#include <util/delay.h>
-#include <string.h>
 #include "PING_PONG_LIB.h"
 #include "OLED_DRIVER.h"
 #include "USART_DRIVER.h"
@@ -16,7 +12,10 @@
 #include "EEPROM.h"
 #include "TIME_DRIVER.h"
 #include "CAN_DRIVER.h"
-
+#include <avr/io.h>
+#include <stdio.h>
+#include <util/delay.h>
+#include <string.h>
 
 
 /****************************************************************************
